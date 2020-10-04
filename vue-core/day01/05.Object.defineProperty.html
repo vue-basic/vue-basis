@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Object.defineProperty</title>
+</head>
+<body>
+    <script>
+        let obj = {
+            firstName : 'zhao',
+            lastName : 'liying'
+        }
+
+        obj.fullName = 'zhaoliying'
+        console.log(obj)
+        // 第一次打印的都是打印的这个对象的类型名(打的是这个对象的构造函数的名字)Object  
+        // 但是一刷新就变了 {firstName: "zhao", lastName: "liying", fullName: "zhaoliying"}
+        
+        /*
+        遇到的问题：Uncaught SyntaxError: Invalid shorthand property initializer
+            原因是“=”应该写为“：”这个经常错，还不容易发现，所以记录下来，加强记忆
+        */
+
+
+        obj.firstName = 'liu'
+        console.log(obj)//原因是“=”应该写为“：”这个经常错，还不容易发现，所以记录下来，加强记忆
+
+        Object.defineProperty(obj,'fullName',{
+            // 对象里边包含两个回调函数  回调函数一般情况下一般都是异步代码 
+            get(){
+                // getter  当读取这个属性的时候自动的调用get()
+                return this.firstName + '-' + this.lastName
+            },
+            set(data){
+                // setter  当写这个属性的时候就会自动调用set()
+                // split() 方法用于把一个字符串分割成字符串数组。
+                let arr = data.split('-')
+                this.firstName = arr[0]
+                this.lastName = arr[1]
+            }
+        })
+        console.log(obj.fullName)
+        obj.fullName = 'liu-liying'
+        console.log(obj)
+
+        // Object.defineProperty()响应式数据 让你添加是属性和之前的属性关联起来
+        // 不管之前对象有没有这个属性 都可以使用
+        // 让这个属性变为一个响应式的属性(和别的数据有关联的,自己变别的数据也变,别的数据变自己也变)
+        // 
+    </script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>事件的绑定基础</title>
+</head>
+<body>
+    <div id="root">
+        <!-- v-on: 简写为 @ 事件 -->
+        <!-- <p v-on:click="update">我爱你{{msg}}</p> -->
+        <p @click="update">我爱你{{msg}}</p>
+    </div>
+
+    <script src="../js/vue.js"></script>
+
+    <script>
+        new Vue({
+            // el:'#root',
+            // 后期用的都是函数写法
+            // 原型对象上的方法是给实例化对象用的  
+            // 函数写法 必须返回一个对象 数据放在这个对象里
+            data() {
+                return {
+                    msg:'赵丽颖'
+                }
+            },
+            methods: {
+                // 回调函数 定义在 methods里边
+                update(){
+                    // 在vue的方法当中this都是指向vm实例化对象的
+                    this.msg = '杨幂'
+                }
+            },
+        }).$mount('#root')
+        // 只要加了$的方法都是实例的
+    </script>
+</body>
+</html>

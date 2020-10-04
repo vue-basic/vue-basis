@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>计算属性</title>
+</head>
+<body>
+    <div id="root">
+        姓：<input type="text" v-model="firstName"/>
+        名：<input type="text" v-model="lastName"/>
+        姓名(单向绑定)：<input type="text" v-bind:value="fullName1"/>
+       
+        <!-- 单向绑定不需要写set -->
+        姓名(双向绑定)：<input type="text" v-model="fullName2"/>
+
+        <p>{{fullName1}}</p>
+        <p>{{fullName1}}</p>
+        <p>{{fullName1}}</p>
+        <p>{{fullName1}}</p>
+       
+    </div>
+
+
+
+
+    <script src="../js/vue.js"></script>
+
+    <script>
+        new Vue({
+            el:'#root',
+            data(){
+                return{
+                    // 写非函数数据
+                    firstName:'zhao',
+                    lastName:'liying'
+                }
+            },
+            methods:{
+                // 写方法和函数
+            },
+            computed:{
+                // 做计算的时候是有缓存的  
+                // 用什么存数据是最合适的？？？  用对象存的
+                // 数组是存多个相同的有序数据的时候才会用到
+                // 当它第一次拿取的时候先看缓存里有没有 , 没有就到下边调get方法做计算 , 计算完了就放缓存
+                // 缓存可以提高效率
+                fullName1 (){
+                    console.log('fullName1调了')
+                    // 代表的就是get 只能读不能写
+                    return  this.firstName + '-' + this.lastName
+                    // this指的是vm
+                },
+
+                fullName2:{
+                    // 如果你的页面操作数据有读有写,那么get和set都得有
+                    get(){
+                        //读---显示
+                        return this.firstName + '-' + this.lastName
+                    },
+                    // 如果只有读取,set没必要写 set如果没必要写,那么可以简化写为一个方法
+                    set(value){
+                        //写---改数据
+                        let arr = value.split('-')
+                        this.firstName = arr[0]
+                        this.lastName = arr[1]
+                    }
+                },
+
+            //    什么时候用计算属性是我们大家刚开始想不到的
+            // 当你有一个数据需要 但是不存在 又是根据已有的数据计算而来的  必然用到计算属性
+
+            }
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>监视属性</title>
+</head>
+<body>
+    <div id="root">
+        <input type="text" v-model="firstName"/>
+        <input type="text" v-model="lastName"/>
+        <input type="text" v-model="fullName"/>
+    </div>
+    <script src="../js/vue.js"></script>
+
+    <script>
+        /*
+            计算属性和监视属性
+        */
+        new Vue({
+            el:"#root",
+            data:{
+                firstName:'zhao',
+                lastName:'liying',
+                fullName:'zhao-liying'
+            },
+            watch: {
+                // 监视谁谁就是一个方法  自动传回来参数
+                // 什么时候用监视属性？？
+                // 属性值是存在的,才能监视  不存在需要计算
+                firstName(newVal,oldVal){
+                    console.log(newVal,oldVal)
+                    this.fullName = newVal + this.lastName
+                },
+                fullName(newVal,oldVal){
+                    let arr = newVal.split('-')
+                    this.firstName = arr[0]
+                    this.lastName = arr[1]
+                },
+            },
+        })
+    </script>
+</body>
+</html>

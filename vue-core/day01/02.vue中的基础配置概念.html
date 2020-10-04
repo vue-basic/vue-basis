@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue中的基础配置概念</title>
+</head>
+<body>
+    <!-- 挂载点 -->
+    <div id="root">
+        <!-- 模板 -->
+        <p>{{msg}}</p>
+        <!-- <a v-bind:href="url">点我去百度</a> -->
+        <a :href="url">点我去百度</a>
+        <p>{{msg.toUpperCase()}}</p>
+        <!-- 函数调用的本质是函数调用表达式 -->
+    </div>
+
+    <script src="../js/vue.js"></script>
+
+    <script>
+        const vm = new Vue({
+
+
+            // 每一个页面都至少要有一个Vue的实例去对应
+            // 实例化vm对象的时候,要传一个配置对象,属性名固定,属性值可以更改的对象叫配置对象,axios({})也是
+            el:'#root',//是一个字符串类型的数据,字符串是css选择器字符串
+            // 这个选择器选中的元素被称作挂载点
+            // 挂载点的内部所有的东西叫做模板,但是不包括挂载点本身  div是挂载点 
+            /*
+                    <!-- 挂载点 -->
+                    <div id="root">
+                        <!-- 模板 -->
+                        <p>{{msg}}</p>
+                    </div>
+            */
+        //    模板当中有模板语法,插值语法和指令语法
+        // {{}}就是插值语法,它的作用是操作模板元素的内容
+        // 指令一般都以v-开头
+        // 指令语法有很多,我们先说一个v-bind,它可以绑定数据到属性身上,数据是动态的,简写  :
+        // 模板语法当中里面的数据都不再是静态的,而是动态的,而且是js表达式
+
+
+            data:{//数据来源的地方
+                msg:'我爱你戚薇',
+                url:'https://www.baidu.com',
+                persons:[
+                    {id:1,name:'赵丽颖',age:33},
+                    {id:2,name:'杨幂',age:34},
+                    {id:3,name:'戚薇',age:45}
+                ]
+            }
+            // data当中所有的属性数据,最终都会变为vm实例化对象身上的同名属性数据
+            // 模板当中所使用是所有数据看似是data的,其实拿的是vm的
+        })
+    </script>
+
+</body>
+</html>

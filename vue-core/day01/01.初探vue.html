@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>初探vue</title>
+</head>
+<body>
+    <div id="root">
+        <!-- <p id="pp">我爱你赵丽颖</p> -->
+        <p>{{msg}}</p>
+    </div>
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/1.11.3/jquery.js"></script>
+    <script type="text/javascript" src="../js/vue.js"></script>
+
+    <script>
+        /*
+        //1.原生
+        // ajax请求省略
+        let data = '我爱你杨幂'
+        let pp = document.querySelector('p')
+        pp.innerHTML = data
+        */
+
+        /*
+        // 2.jQuery
+        let data = '我爱你杨幂'
+        $('#pp').text(data)
+        */
+    
+        // Vue 是一个函数
+        // Vue()
+        // 函数和函数对象
+        // Vue.pro  --- 函数对象
+        // new Vue
+
+        /*
+            www.baidu.com/8?name="zhaoliying"
+            params 参数：/8  包含在路径中
+            query参数： key=value name="zhaoliying"  不包含在路径中
+
+            axios({
+                url:'',
+                method:'GET',
+                data:{
+                    // 请求体参数,  post 请求
+                },
+                params:{
+
+                }
+            })
+
+            new Vue({
+                el:"#root",
+                // 挂载点 把Vue的实例和
+                        <div id="root">
+                            <p id="pp">我爱你赵丽颖</p>
+                        </div>
+                联系在一起
+            })
+        */ 
+
+        new Vue({
+            el:'#root',
+            data:{
+                msg:'我爱你戚薇'
+            }
+        })
+        
+    </script>
+</body>
+</html>

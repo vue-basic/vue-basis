@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据绑定MVVM及事件的添加</title>
+</head>
+<body>
+    <!-- MVVM：双向数据绑定 -->
+    <!-- root为挂载点 -->
+    <div id="root">
+        <!-- data当中的数据通过模板语法流向你的页面语法当中 -----  单向数据绑定 -->
+        <input type="text" :value="msg">
+        <p>我爱你{{msg}}</p>
+    </div>
+
+    <script type="text/javascript" src="../js/vue.js"></script>
+
+    <script>
+        const vm = new Vue({
+            el:'#root',
+            // data有两种写法 ,一种是对象写法,另一种是data函数写法  函数就是方法,方法就是函数
+            // 函数写法要求必须return一个对象
+            // data:function(){
+            //      //this
+            // },
+            data(){
+                return {
+                    msg:'赵丽颖'
+                }
+            },
+            // data:()=>{
+            //     //this指向window
+            // }
+        })
+    </script>
+</body>
+</html>
