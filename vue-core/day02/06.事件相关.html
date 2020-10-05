@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>事件相关</title>
+</head>
+<body>
+    <div id="root">
+        <!-- 最初始的写法 -->
+        <button v-on:click="test1">test1</button>
+        <!-- 事件添加的简写 -->
+        <button @click="test2">test2</button>
+        <!-- 事件回调不带参数默认传递的是事件对象event -->
+        <button @click="test3">test3</button>
+        <!-- 事件回调带来参数并且还要用到事件对象  如果不传参,默认传过去的是事件对象event;如果传参了,事件对象就被覆盖掉了 -->
+        <button @click="test4('zhaoliying')">test4</button></button>
+        <!-- 事件回调不但带来自己参数还要用到事件对象的东西 -->
+        <button @click="test5('zhaoliying',$event)">test5</button>
+
+        <!-- 阻止事件冒泡 -->
+        <div style="width: 300px;height: 300px; background-color: red;" @click='outer'>
+            <div style="width: 100px;height: 100px; background-color: green;" @click.stop="inner"></div>
+        </div>
+
+        <!-- 取消浏览器的默认行为 -->
+        <a href="http://www.atguigu.com" @click.prevent="removeDefault">点我去学习</a>
+
+        <!-- 
+            键盘事件 一般在哪里加？？？
+            表单类元素或者document身上
+        -->
+        <input type="text" @keyup.enter="testKey"/>
+       
+        <!-- 
+             button.onclick = function(event){}
+            事件对象不是我们自己用的
+            当你发生这件事的时候,浏览器会帮你把这件事相关的一切信息包装成一个对象,自动传给你,
+            你写了就相当于接收了,就可以用了
+            你没写就相当于没接收,那就没法用
+
+            因为这个函数是个回调函数,回调函数不是我们自己调用的,是浏览器/系统调用的
+            浏览器调用了这个方法,它就会自动封装成一个东西传给你,你用就接收,不用就算了
+
+            事件对象:当事件触发的时候,浏览器会调用这个回调函数,
+            浏览器会帮我们自动的封装一个对象作为实参传给回调函数的第一个形参,
+            这个事件对象是和这次触发事件相关的所有信息
+
+         -->
+    </div>
+
+    <script src="../js/vue.js"></script>
+
+    <script>
+        Vue.config.productionTip = false
+
+        new Vue({
+            el:'#root',
+            methods: {
+                test1(){
+                    console.log('test1调用')
+                },
+                test2(){
+                    console.log('test2调用')
+                },
+                // 事件回调函数如果没有传递其他参数,默认传过来的就是事件对象
+                test3(event){
+                    // event.target 事件委派/事件委托
+                    console.log('test3调用',event.target.innerHTML)
+                },
+                test4(str){
+                    // 如果不传参,默认传过去的是事件对象event;如果传参了,事件对象就被覆盖掉了 str拿的就是传过来的那个字符串
+                    console.log('test4调用',str)
+                },
+                test5(str,event){
+                    // 接收参数的顺序要跟传递参数的顺序一致
+                    console.log('test5调用',str,event.target.innerHTML)
+                },
+                // 事件流 冒泡和捕获
+                // 事件流/事件机制是客观存在的 也就是事件冒泡是客观存在的
+                outer(){
+                    console.log('outer')
+                },
+                inner(event){
+                    console.log('inner')
+                    // 阻止事件冒泡
+                    // event.stopPropagation()
+                },
+                removeDefault(event){
+                    console.log('haha')
+                    // event.preventDefault();
+                    
+                },
+                testKey(event){
+                    // if(event.keycode === 13){
+                    //     console.log('回车触发')
+                    // }
+
+                    console.log('回车触发')
+                }
+            },
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生命周期</title>
+</head>
+<body>
+    <div id="root">
+        <p v-show="isShow" ref="pp">{{isShow?'我爱你赵丽颖':'我爱你杨幂'}}</p>
+        <button @click="destory">点击销毁</button>
+    </div>
+
+    <script src="../js/vue.js"></script>
+
+    <script>
+        /*
+            生命周期(8个钩子):
+                new Vue() ---- 实例化对象就已经有了,只不过刚开始是个空对象
+                    4件事：
+                        1.开辟空间 ---- 实例化对象就已经有了,只不过刚开始是个空对象
+                        2.修改this指向 ---- 把你栈里边的this指向过来
+                        3.执行构造函数 ---- 往对象里边塞东西 this.xxx = xxx
+                        4.返回这个实例的地址
+                init Events & Lifecycle
+    // 初始化系统环境
+
+    beforeCreate ------第一个钩子 生命周期最早的一个钩子  (打印this.msg是打印不到了)  初始化数据时的两个钩子之一 ----看不到数据
+                init injections & reactivety  把data代理到对象里边去 这个东西最终会成为vm实例的东西 (初始化数据 data里的数据 最终挂载到vm身上去 把你传进去的配置对象,把配置对象给了Vue的实例)
+    created------ 打印this.msg是可以看到的  初始化数据时的两个钩子之一 ----- 可以看到数据
+        // 搞数据 解析data
+        
+                Has 'el' option? ----看看对象里边有没有el  ---- 要挂载了
+                如果没有 No
+                when vm.$mounted(el) is called? ----看你有没有写mounted
+                如果有 Yes
+                Has 'template' option? ---- 有没有模板  挂载的页面 root 内部其实就是模板
+                    如果有 Yes
+                    Compile template into render function? --- 如果有就拿当前找到的东西(root)当成模板去解析
+                    如果没有 No
+                    Compile el's outerHTML as template? --- 如果没有就拿他外边(body)的作为模板去解析
+    // 找挂载点
+
+    beforeMount------ 钩子,挂载之前  挂载点已找到,但是还没挂 页面上找不到,因为还没解析完挂上去,页面上看不见  这时候如果要打印p是大一不到的,因为还没挂载上去  挂载之前是拿不到p标签的
+            Create vm.$el and replace 'el' with it  ----虚拟DOM 正儿八经创建元素 挂载到root上边去 挂载上去了   解析创建p标签 然后挂载上去
+    mounted ---- 挂载完了  页面就可以看到了,已经解析挂载上去了 这时候就可以拿到p标签了
+    // 挂载  实例已经搞定了
+
+    // 修改数据的时候 怎么去让他的数据修改
+                    Mounted
+                    when data changes ---- 当data中的数据被修改了
+    beforeUpdate------data中的数据已经改了,页面的数据还没渲染上去   页面更新前
+                    Virtual DOM re-render and patch?----虚拟DOM 重新渲染解析  数据一旦被更新,页面就要重新被渲染
+    updated----------页面上的数据已经渲染完成
+    // 页面的修改之前和页面修改之后
+
+                 when vm.$destory() is called -----只有vm.$destory() 这个方法被调用时,你的实力才会被销毁 
+    beforeDestroy-----做一些善后工作 vm快死了,把善后工作做一做，再不做就没机会了
+                Teardown watchers.child components and event listeners
+                Destroyed----- vm 死了
+    destroyed ---- 可以打印一下vm死没死
+
+
+生命周期钩子的执行顺序是固定的
+        1. beforeCreate() {
+                // 打印数据是看不见的
+                console.log(this.isShow)//undefined
+            },
+        2. created() {
+                // 打印数据可以看见
+                console.log(this.isShow)//true
+            },
+        // 初始化数据
+
+        3. beforeMount() {
+                // 挂载前 模板挂载前(生成正儿八经的标签)
+                console.log(this.$refs.pp)//undefined
+            },
+        4. mounted() {  
+                // 挂载完成 
+                console.log(this.$refs.pp)//<p>我爱你赵丽颖</p>
+            }
+        // 挂载
+
+        5.beforeUpdate() {
+                // data中的数据已经改了 但是页面上的数据还没改
+                // console.log(this.isShow,this.$refs.pp.innerText)//false "我爱你赵丽颖"  true "我爱你杨幂"
+
+            },
+        6. updated() {
+                // 
+                console.log(this.isShow,this.$refs.pp.innerText)//false "我爱你杨幂" true "我爱你赵丽颖"
+            },
+        // 数据更改
+
+        7.beforeDestroy() {
+            //    必须要去调用实例的$destroy()方法
+            //    一般是在销毁实例之前的一些善后工作  清除定时器/解绑事件相关
+            //    清除定时器的代码应该写在这里
+            clearInterval(this.timer)
+           },
+        8.destoryed(){
+            //    销毁后可以打印提示信息
+           },
+        //    销毁
+
+
+        */
+        new Vue({
+            el:'#root',
+            data() {
+                return {
+                    /*
+                     beforeCreate()  数据打印不出来
+                     created()  数据打印不出来
+                        这两个钩子在搞数据
+                     */
+                     isShow:true,
+
+                }
+            },
+            // 生命周期钩子执行的顺序是固定的
+            beforeCreate() {
+                // 打印数据是看不见的
+                console.log(this.isShow)//undefined
+            },
+            created() {
+                // 打印数据是可以看见的
+                console.log(this.isShow)//true
+            },
+            //数据
+
+            beforeMount() {
+                // 挂载前 模板挂载前(生成正儿八经的标签)
+                console.log(this.$refs.pp)//undefined
+            },
+            mounted() {  //绑定事件 定时器 发送ajax请求
+                console.log(this.$refs.pp)//<p>我爱你赵丽颖</p>
+            //    回调代码一般都在这 发ajax请求 定时器
+            //    页面刚刚挂载显示完成
+            this.timer = setInterval(() => {
+                this.isShow = !this.isShow
+            }, 1000);
+           },
+            //    挂载
+
+            // 数据修改
+            beforeUpdate() {
+                // data中的数据已经改了 但是页面上的数据还没改
+                // console.log(this.isShow,this.$refs.pp.innerText)//false "我爱你赵丽颖"  true "我爱你杨幂"
+
+            },
+            updated() {
+                // 
+                console.log(this.isShow,this.$refs.pp.innerText)//false "我爱你杨幂" true "我爱你赵丽颖"
+            },
+            // 数据更改
+
+           beforeDestroy() {
+            //    必须要去调用实例的$destroy()方法
+            //    一般是在销毁实例之前的一些善后工作  清除定时器/解绑事件相关
+            //    清除定时器的代码应该写在这里
+            clearInterval(this.timer)
+           },
+           destoryed(){
+            //    销毁后可以打印提示信息
+           },
+        //    销毁
+
+           methods: {
+            destory(){
+            //    销毁实例 
+            // 点击按钮我要销毁vm实例,销毁之前自动会调用beforeDestroy回调
+                this.$destroy()//销毁实例的方法 固定的
+            }
+           },
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>列表渲染</title>
+</head>
+<body>
+    <div id="root">
+        <input type="text" placeholder="请输入查找的关键字" v-model="keyword"/>
+        <ul>
+            <li v-for="(person,index) in newPersons" :key="person.id">
+                {{person.id}}---{{person.name}}---{{person.age}}
+            </li>
+        </ul>
+
+        <!-- @click="sortType = 0"  回调函数如果内部只有一行代码,完全可以把这行代码写在这,不需定义-->
+        <button @click="changeType(0)">原样排序</button>
+        <button @click="changeType(1)">年龄升序</button>
+        <button @click="changeType(3)">年龄降序</button>
+
+    </div>
+
+    <script src="../js/vue.js"></script>
+
+    <script>
+        /*
+            过滤分析：
+            根据效果分析,数组用的是原来的数据还是新的数组
+            1.假设用的是原来的数据,一上来展示没问题
+            2.当keyword变化的时候监视它,我们可以在原数组当中删除不包含keyword的项
+            3.当keyword变化的时候又变成空串的时候,我们想回去回不去了
+            到此为止,卡死了
+            4.既然原数组没法做效果,就必须使用新的数组,而且这个数组一上来和原数组数据一样
+            5.既然是新数组,那就一定要用计算属性,根据已有的原数组和keyword 计算
+        */
+
+         /*
+            排序分析：
+                1.排序首先要有一个参照数据,所以在data当中我们需要自定义一个数据用来表示排序规则和类型
+                2.点击排序按钮的时候这个数据要发生响应变化,变化的值我们是自己设定好的
+                3.再来说排序的逻辑,其实就是在计算属性过滤的基础上去加逻辑
+        */
+        new Vue({
+            el:"#root",
+            data() {
+                // data 当中吧傲寒初始化的数据和要收集的数据
+                return {
+                    // 第一步,先拿到输入的关键字 input一般都是v-model去收集数据
+                   keyword:'',
+                   persons:[
+                       {id:1,name:'zhaoliying',age:33},
+                       {id:2,name:'yangmi',age:32},
+                       {id:3,name:'liuyifei',age:34},
+                       {id:4,name:'qiwei',age:31},
+                   ] ,//代表的就是ajax回来的数据
+                   sortType:0 //0代表原样排序 1代表升序 2代表降序
+                }
+            },
+            computed: {
+                // 这里面的数据不是初始化数据也不是要收集的数据,而是后面根据已有的数据计算而来的
+                newPersons(){
+                    let {keyword,persons} = this  //对象的解构赋值
+                    let result = persons.filter(item => item.name.indexOf(keyword) != -1)
+
+                    // 排序
+                    // if(sortType !== 0){
+                    //     result.sort((a,b) => {
+                    //         if(sortType === 1){
+                    //             return a.age-b.age
+                    //         }else{
+                    //             return b.age - a.age
+                    //         }
+                    //     })
+                    // }
+
+                    return result 
+                }
+            },
+            methods: {
+                // 无论是自己定义的回调函数
+                // 还是以后我们共用的一些函数
+                // 都在这个里面去写
+
+                changeType(num){
+                    this.sortType = num
+                }
+            },
+            watch:{
+                // 监视已有的数据,已有的数据发生了点变化,我们就可以干点什么
+            }
+        })
+    </script>
+</body>
+</html>

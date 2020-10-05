@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>条件渲染</title>
+    <!-- <style>
+        #box{
+            width: 200px;
+            height: 200px;
+            background-color: red;
+        }
+    </style> -->
+</head>
+<body>
+    <div id="root">
+        <!-- 
+            v-if和v-show都会用
+            v-if是删除了这个节点,也就是dom树上是没有这个节点的,内存中没有
+            如果我们获取这个节点,获取不到,切换不频繁可以用来节省内存
+
+            v-show不是对节点进行删除操作,而是给节点元素添加样式去操作的  display:none
+            但是有可能拿到的东西样式是  display:none  切换很频繁的时候,我们使用v-show
+        
+        -->
+
+        <p v-if="isOk">表白成功</p>
+        <!-- <p v-else-if ="isPending">表白进行中</p> -->
+        <p v-else>表白失败</p>
+        
+        <p v-show="isOk">求婚成功</p>
+        <p v-show="!isOk">求婚失败</p>
+
+        <button @click="update">点击切换</button>
+    </div>
+    
+    <div id="box"></div>
+    <script src="../js/vue.js"></script>
+    <script>
+        const vm = new Vue({
+            el:'#root',
+            data() {
+                return {
+                    isOk:false,
+                    // isPending:true
+                }
+            },
+            methods: {
+                update(){
+                    this.isOk = !this.isOk
+                    // this.isPending = false
+                }
+            },
+        })
+
+        // let box = document.getElementById('box')
+
+        // let flag = true
+        // box.onclick = function(){
+        //     if(flag){
+        //         box.style.backgroundColor = 'green'
+        //     }else{
+        //         box.style.backgroundColor = 'red'
+        //     }
+        //     flag = !flag
+        // }
+    </script>
+</body>
+</html>

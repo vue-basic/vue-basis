@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>强制绑定css样式</title>
+    <style>
+        .classA{
+            background-color: hotpink;
+        }
+        .classB{
+            color: lawngreen;
+        }
+        .classC{
+            font-size: 80px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 
+        1.类的操作
+        2.style的操作  对象写法：重中之重
+     -->
+    <div id="root">
+        <!-- 1.操作类 当我不知道这个标签类到底是谁,那么就得动态获取 -->
+        <p :class="myClass" class="classC">我爱你赵丽颖</p>
+       
+
+        <!-- 2.当我知道哪些类是有的,但是不知道哪个起作用 -->
+        <p :class="{classA:isA,classB:isB}">我爱你杨幂</p></p>
+
+        <!-- 3.数组的写法 当一个标签有很多类都生效,那么就使用数组的写法 -->
+        <p :class="['classA','classB','classC']">我爱你戚薇</p>
+
+        <!-- 4.操作style 加了:说明引号当中就是js了 font-size变成小驼峰写法-->
+        <!-- <p :style="color: blue; font-size: 40px;">我爱你刘亦菲</p> -->
+        <p :style="{color: myColor, fontSize: mySize}">我爱你刘亦菲</p>
+        <button @click="changeClass">点击修改类</button>
+
+    </div>
+
+    <script src="../js/vue.js"></script>
+
+    <script>
+        new Vue({
+            el:'#root',
+            data() {
+                return {
+                    myClass:'classA',
+                    isA:false,
+                    isB:true,
+                    myColor:'blue',
+                    mySize:'40px'
+                }
+            },
+            methods: {
+                changeClass(){
+                    this.myClass = 'classB'
+                    this.isA = !this.isA
+                    this.isB = !this.isB
+                }
+            },
+        })
+    </script>
+</body>
+</html>

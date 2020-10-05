@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自动收集表单数据</title>
+</head>
+<body>
+    <div id="root">
+        <form action="">
+            用户名：<input type="text" placeholder="请输入用户名" v-model="userInfo.username"/>
+            <br/>
+            密码:<input type="password" v-model="userInfo.password" />
+            <br/>
+            性别：
+            <!-- 收集的是表单的value值 -->
+            <input type="radio" name="sex" value="male" v-model="userInfo.gender"/>男
+            <input type="radio" name="sex" value="female" v-model="userInfo.gender"/>女
+            <br/>
+            爱好：
+            <!-- 收集的是一个数组,收集的也是一个value值 -->
+                篮球:<input type="checkbox" value="basketball" v-model="userInfo.fav"/>
+                足球:<input type="checkbox" value="football" v-model="userInfo.fav"/>
+                乒乓球:<input type="checkbox" value="pingpang" v-model="userInfo.fav"/>
+                <br/>
+            城市:
+            <!-- 一般select收集的是它的id   select 收集的数据是选中的选项的value值 -->
+            <select v-model="userInfo.cityId">
+                <option :value="city.id" v-for="(city,index) in cities" :key="city.id">{{city.name}}</option>
+            </select>
+            <br/>
+            自我简介：
+            <textarea v-model="userInfo.discribe"></textarea>
+            <br/>
+            <button @click.prevent="submit">提交</button>
+        </form>
+        
+
+    </div>
+    <script src="../js/vue.js"></script>
+
+    <script>
+        new Vue({
+            el:'#root',
+            data() {
+                return {
+                    // userInfo用来收集数据
+                   userInfo:{
+                        username:'',
+                        password:'',
+                        gender:'',
+                        fav:[],
+                        cityId:'',
+                        discribe:''
+                    },
+                    cities:[
+                        {id:1,name:'北京'},
+                        {id:2,name:'上海'},
+                        {id:3,name:'天津'}
+                    ],
+                    
+                }
+            },
+            // methods: {
+            //     async submit(){//模拟发请求
+            //         const result = await axios({
+            //             url:'',
+            //             method:'POST',
+            //             data:this.userInfo
+            //         })
+            //     }
+            // },
+        })
+    </script>
+
+</body>
+</html>

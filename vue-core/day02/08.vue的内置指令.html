@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vue的内置指令</title>
+</head>
+<body>
+    <div id="root">
+        <!-- v-text不会解析标签 v-html会解析指令 -->
+        <p v-text="msg"></p>
+        <p v-html="msg" ref="p2"></p></p>
+        <!-- <p>{{msg}}</p> -->
+
+        <button @click="test">点击</button>
+    </div>
+
+    <script src="../js/vue.js"></script>
+
+    <script>
+        new Vue({
+            el:'#root',
+            data() {
+                return {
+                    msg:'<h2>我爱赵丽颖</h2>'
+                }
+            },
+            methods: {
+                test(){
+                    console.log(this.$refs.p2.innerText)
+                }
+            },
+        })
+    </script>
+</body>
+</html>

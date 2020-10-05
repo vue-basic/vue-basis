@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vue中添加定时器</title>
+</head>
+<body>
+   <div id="root">
+       <!-- 页面的变化归根到底是数据的变化 -->
+        <p v-show="isShow">我爱你赵丽颖</p>
+        <button @click="destory">点击销毁</button>
+   </div> 
+
+   <script src="../js/vue.js"></script>
+   <script>
+    /*
+        生命周期的回调函数/回调也叫钩子:
+            1.mounted 页面刚刚挂载显示完成
+    */
+       new Vue({
+           el:'#root',
+           data() {
+               return {
+                   isShow:true
+               }
+           },
+           mounted() {  
+            //    回调代码一般都在这 发ajax请求 定时器
+            //    页面刚刚挂载显示完成
+            this.timer = setInterval(() => {
+                this.isShow = !this.isShow
+            }, 1000);
+           },
+           beforeDestroy() {
+            //    一般是在销毁实例之前的一些善后工作  清除定时器/解绑事件相关
+            //    清除定时器的代码应该写在这里
+            clearInterval(this.timer)
+           },
+           methods: {
+            destory(){
+            //    销毁实例 
+            // 点击按钮我要销毁vm实例,销毁之前自动会调用beforeDestroy回调
+                this.$destroy()//销毁实例的方法 固定的
+            }
+           },
+       })
+   </script>
+</body>
+</html>

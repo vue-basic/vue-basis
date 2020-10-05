@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>列表渲染</title>
+</head>
+<body>
+    <div id="root">
+        <!-- 根据数据来创建的时候是动态创建 -->
+        <ul>
+            <li v-for="(person,index) in persons" :key="person.id">
+                {{person.id}}---{{person.name}}---{{person.age}}
+            </li>
+            <!-- 
+                如果我们只是为了展示用的,key使用index没问题
+                如果我们以后对这个数据还有增删改的操作,那么index效率不高并且更可怕的是会出问题
+                key以后我们要使用的几乎都是id值,使用这个唯一标识可以提高列表渲染以及修改的效率
+             -->
+        </ul>
+
+        <button @click="changeFirstObjName">点击修改第一个人的姓名</button>
+    </div>
+
+    <script src="../js/vue.js"></script>
+
+    <script>
+        new Vue({
+            el:"#root",
+            data() {
+                return {
+                    // persons是对象属性 所有的对象属性包括它自己及它内部的对象 只要是对象属性他就是响应式的,数组不可以
+                   persons:[
+                       {id:1,name:'zhaoliying',age:33},
+                       {id:2,name:'yangmi',age:32},
+                       {id:3,name:'liuyifei',age:34},
+                       {id:4,name:'qiwei',age:31},
+                   ] 
+                }
+
+                // {
+                //     name:'liuyuan',
+                //     girlF:{
+                //         name:'zly',
+                //         age:33,
+                //         movies:[
+                //             {id:1,name:'乘风破浪'}
+                //         ]
+                //     }
+                // }
+
+            },
+            methods: {
+                changeFirstObjName(){
+                    // 第一种 
+                    // this.persons[0].name = 'yingbao'  //修改的是对象属性
+
+                    // 第二种
+                    // this.persons[0] = {id:1,name:'liying',age:33}  //这样改是不行的 修改的是数组,不是对象属性
+                    // console.log(this.persons)//其实数据改了,只是没有影响到页面 
+
+                    // 第三种
+                    this.persons.splice(0,1,{id:1,name:'yingying',age:33})
+                    // data当中的数据,所有的对象属性都是响应式的,修改对象的属性就会影响到页面更改
+                    // 修改数组的整体第一个值,页面不会发生改变,因为数组下标不是对象的属性,所以不是响应式数据
+                    // 其实我们vm内部这个数组第一个数据已经改了,只是没有影响到页面
+
+                    // 数组的部分原生方法被vue做了改变,名字和原生名字一样,但是已经不是你的原生方法了
+                    // vue在给这些方法添加了修改页面的功能,使得页面可以修改
+
+                    // 本质是对象的所有属性都添加了get和set方法(响应式数据)
+
+                }
+            },
+        })
+    </script>
+</body>
+</html>
