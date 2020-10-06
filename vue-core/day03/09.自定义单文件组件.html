@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自定义单文件组件</title>
+</head>
+<body>
+    <div id="root">
+
+    </div>
+
+    <script src="../js/vue.js"></script>
+    <script>
+        import App from './App'
+        new Vue({
+            el:'#root',
+            // 注册到Vue里边来
+            components:{
+                App
+            },
+            template:'<App/>'
+        })
+    </script>
+</body>
+</html>

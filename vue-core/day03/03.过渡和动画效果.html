@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>过渡和动画效果</title>
+</head>
+<style>
+    .fade-enter-active,
+    .fade-leave-active {
+        transition: opacity .5s;
+    }
+
+    .fade-enter,
+    .fade-leave-to
+
+    /* .fade-leave-active below version 2.1.8 */
+        {
+        opacity: 0;
+    }
+</style>
+
+<body>
+    <div id="demo">
+        <!--
+             Vue里边页面在变其实是数据在变 
+            Vue把过渡和动画拆成两个过程:
+                1.从无到有 enter
+                    v-enter Opacity:0
+                    v-enter-active 中间的过程
+                    v-enter-to  Opacity:1 一般不用,因为默认为1
+                2.从有到无 leave
+                    v-leave Opacity:1
+                    v-leave-active  中间过程
+                    v-leave-to Opacity:0
+        -->
+        <button @click="show = !show">
+            Toggle
+        </button>
+        <transition name="fade">
+            <p v-if="show">hello</p>
+        </transition>
+    </div>
+
+    <script src="../js/vue.js"></script>
+
+    <script>
+        new Vue({
+            el: '#demo',
+            data: {
+                show: true
+            }
+        })
+    </script>
+</body>
+
+</html>

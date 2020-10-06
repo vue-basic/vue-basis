@@ -1015,3 +1015,333 @@ thisValue	可选。对象作为该执行回调时使用，传递给函数，用�
         })
     </script>
 ```
+
+## 20.过渡和动画
+
+```
+  Vue里边页面在变其实是数据在变 
+            Vue把过渡和动画拆成两个过程:
+                1.从无到有 enter
+                    v-enter Opacity:0
+                    v-enter-active 中间的过程
+                    v-enter-to  Opacity:1 一般不用,因为默认为1
+                2.从有到无 leave
+                    v-leave Opacity:1
+                    v-leave-active  中间过程
+                    v-leave-to Opacity:0
+```
+```
+<body>
+    <div id="demo">
+        <button @click="show = !show">
+            Toggle
+        </button>
+        <transition name="fade">
+            <p v-if="show">hello</p>
+        </transition>
+    </div>
+
+    <script src="../js/vue.js"></script>
+
+    <script>
+        new Vue({
+            el: '#demo',
+            data: {
+                show: true
+            }
+        })
+    </script>
+</body>
+```
+
+## 21.自定义指令
+```
+定义全局指令 所有的Vue实例都可以用
+指令名字不包含v-,而且不能是大写
+
+局部指令 只有当前的实例可以使用
+局部指令是在配置Vue的配置对象中去配置
+```
+
+```
+<body>
+    <div id="root">
+        <p v-text="msg"></p>
+        <p v-upper="msg"></p>
+    </div>
+
+    <div id="root1">
+        <p v-text="msg"></p>
+        <p v-upper="msg"></p>
+    </div>
+
+    <script src="../js/vue.js"></script>
+
+    <script>
+        // 定义全局指令 所有的Vue实例都可以用
+        // 指令名字不包含v-,而且不能是大写
+        Vue.directive('upper',function(element,bindings){
+            // console.log(bindings)//bindings---Object
+            element.textContent = bindings.value.toUpperCase()
+            // textContent只有高级浏览器可以用
+        })//Vue的对象用法
+
+        // 局部指令 只有当前的实例可以使用
+        new Vue({//Vue的函数用法
+            el:'#root',
+            data() {
+                return {
+                    msg:'i love you'
+                }
+            },
+            // 局部指令是在配置Vue的配置对象中去配置
+            directives:{
+                upper(element,bindings){
+                    element.textContent = bindings.value.toUpperCase()
+                },
+                
+            }
+        })
+
+        new Vue({
+            el:'#root1',
+            data() {
+                return {
+                    msg:'happay day'
+                }
+            },
+        })
+    </script>
+</body>
+```
+
+## 22.自定义过滤器
+```
+1.全局过滤器
+2.局部过滤器
+
+<body>
+    <div id="root">
+        <p>{{timeNow | timeFormat}}</p>
+        <p>{{timeNow | timeFormat('hh:mm:ss')}}</p>
+    </div>
+
+    <script src="../js/vue.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/moment.js/2.27.0/moment.js"></script>
+
+    <script>
+
+        // 自定义过滤器 是用来对渲染的数据进行进一步的计算之后,返回新数据再去渲染
+
+        // 全局过滤器
+        // Vue.filter('timeFormat',function(value,format='YYYY-MM-DD hh:mm:ss'){
+        //     return moment(value).format(format)
+        // })
+
+
+        new Vue({
+            el:'#root',
+            data() {
+                return {
+                    timeNow:Date.now() 
+                }
+            },
+            // 局部过滤器
+            filters:{
+                timeFormat(value,format='YYYY-MM-DD hh:mm:ss'){
+                    return moment(value).format(format)
+                }
+            }
+            
+        })
+    </script>
+</body>
+```
+
+## 23.IIFE 立即调用函数表达式
+* 是一个在定义时就会立即执行的JavaScript函数
+```
+(function(){
+    statements
+})();
+
+jQuery的最外层用到了它 相当于自动的往外暴露一个东西
+```
+## 24.自定义插件
+```
+(function(w){
+    // 一个Vue的插件本质上是一个对象
+
+    // 1.首先要先定义一个对象
+    let MyPlugin = {}
+
+    // let vm = new Vue
+
+    // 对象里边要有install方法
+    MyPlugin.install = function (Vue, options) {
+        // 1. 添加全局方法或属性  myGlobalMethod这个方法是给Vue添加的方法 vm不能用
+        Vue.myGlobalMethod = function () {
+          console.log('myGlobalMethod全局方法调用了，切记实例不能直接使用，是Vue的方法')
+        }
+      
+        // 2. 添加一个全局资源(asset)  定义全局指令
+        Vue.directive('my-directive', {
+          bind (el, binding, vnode, oldVnode) {
+            // 一些逻辑……
+            el.innerText = binding.value.toUpperCase()
+          }
+        })
+      
+        // 4. 添加一个实例方法  给Vue的原型添加的,原型上的方法是给实例化对象用的,是给vm实例用的 Vue不能用  
+        Vue.prototype.$myMethod = function (methodOptions) {
+          console.log('$myMethod实例方法调用了，切记Vue不能直接使用，是V实例化对象的方法')
+        }
+      }
+
+    //   把这个对象给暴露出去
+    w.MyPlugin = MyPlugin 
+})(window);//IIFE
+```
+
+* 不管是自定义插件 第三方插件还是官方插件都要写的话
+* Vue.use(MyPlugin) //声明使用插件,本质就是自动调用插件对象的install方法
+
+```
+<body>
+    <div id="app">
+        <p v-my-directive="msg"></p>
+    </div>
+
+    <script src="../js/vue.js"></script>
+    <script src="../js/myPlugin.js"></script>
+    <!-- 一旦引入window上就有了MyPlugin -->
+
+    <script>
+        console.log(MyPlugin)
+
+        // 不管是自定义插件 第三方插件还是官方插件都要写的话
+        Vue.use(MyPlugin) //声明使用插件,本质就是自动调用插件对象的install方法
+        Vue.myGlobalMethod()
+
+        console.dir(Vue)
+        
+        let vm = new Vue({
+            el:'#app',
+            data() {
+                return {
+                    msg:'liuyuan'
+                }
+            },
+        })
+
+        vm.$myMethod()
+    </script>
+</body>
+```
+
+## 25.自定义组件 (非单文件)
+* 1.没有联想,写起来比较复杂
+* 2.不能写css
+* 3.不能模块化开发
+
+```
+<body>
+    <div id="root">
+        <!-- 本质上是实例化了一个组件对象 -->
+        <mybutton></mybutton>
+    </div>
+
+    <script src="../js/vue.js"></script>
+
+    <script>
+        // 1.麻烦的写法
+            // 如果你想要定义一个组件 那么你必须调用Vue里边的一个方法(extend)
+
+            // 1.定义组件 本质上是定义了一个实例化组件对象的构造函数
+            const VueComponent = Vue.extend({
+                // 配置对象 和Vue当中传的配置对象几乎一样 只是不能写el
+                // 可以理解组件就是一个小的vm
+                // Vue.extends 返回的是一个构造函数
+
+                data() {
+                    return {
+                        count:0 , //这个数据是给我一会定义的组件的
+                    }
+                },
+                template:'<button @click="count++">你点击了{{count}}</button>'
+            })
+
+            // 2.注册组件 本质是给组件对象起名字,名字一定要小写  让mybutton和构造函数绑定到一起 但此时没有实例化这个组件对象
+            Vue.component('mybutton',VueComponent)
+
+            // 3.使用组件 本质是实例化了一个组件对象
+
+
+        new Vue({
+            el:'#root'
+        })    
+    </script>
+</body>
+```
+
+```
+ // 2.简单写法 
+            // 第二个参数传入的是配置对象
+            // 1.定义组件 本质上是定义了一个实例化组件对象的构造函数
+            Vue.component('mybutton',{
+                // 配置对象 和Vue当中传的配置对象几乎一样 只是不能写el
+                // 可以理解组件就是一个小的vm
+                // Vue.extends 返回的是一个构造函数
+
+                data() {
+                    return {
+                        count:0 , //这个数据是给我一会定义的组件的
+                    }
+                },
+                template:'<button @click="count++">你点击了{{count}}</button>'
+            })
+```
+
+```
+//3.
+ new Vue({
+            el:'#root',
+            components:{
+                mybutton:{
+                // 配置对象 和Vue当中传的配置对象几乎一样 只是不能写el
+                // 可以理解组件就是一个小的vm
+                // Vue.extends 返回的是一个构造函数
+
+                data() {
+                    return {
+                        count:0 , //这个数据是给我一会定义的组件的
+                    }
+                },
+                template:'<button @click="count++">你点击了{{count}}</button>'
+            }
+            }
+            
+        })    
+```
+
+## 26.组件注册
+* 1.全局注册
+
+```
+import MyButton from './components/MyButton.vue'
+// 注册全局组件
+Vue.component('MyButton',MyButton)
+```
+
+* 2.局部注册
+
+```
+export default {
+    name:'App',
+    components:{
+        // 定义局部组件
+        // MyButton:MyButton  //名字:配置对象 两者相同可省略
+        MyButton
+    }
+}
+```

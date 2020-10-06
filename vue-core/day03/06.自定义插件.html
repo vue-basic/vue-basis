@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自定义插件</title>
+</head>
+<body>
+    <div id="app">
+        <p v-my-directive="msg"></p>
+    </div>
+
+    <script src="../js/vue.js"></script>
+    <script src="../js/myPlugin.js"></script>
+    <!-- 一旦引入window上就有了MyPlugin -->
+
+    <script>
+        console.log(MyPlugin)
+
+        // 不管是自定义插件 第三方插件还是官方插件都要写的话
+        Vue.use(MyPlugin) //声明使用插件,本质就是自动调用插件对象的install方法
+        Vue.myGlobalMethod()
+
+        console.dir(Vue)
+        
+        let vm = new Vue({
+            el:'#app',
+            data() {
+                return {
+                    msg:'liuyuan'
+                }
+            },
+        })
+
+        vm.$myMethod()
+    </script>
+</body>
+</html>

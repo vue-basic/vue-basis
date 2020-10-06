@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自定义组件</title>
+</head>
+<body>
+    <div id="root">
+        <!-- 本质上是实例化了一个组件对象 -->
+        <mybutton></mybutton>
+    </div>
+
+    <script src="../js/vue.js"></script>
+
+    <script>
+            // // 2.简单写法 
+            // // 第二个参数传入的是配置对象
+            // // 1.定义组件 本质上是定义了一个实例化组件对象的构造函数
+            // Vue.component('mybutton',{
+            //     // 配置对象 和Vue当中传的配置对象几乎一样 只是不能写el
+            //     // 可以理解组件就是一个小的vm
+            //     // Vue.extends 返回的是一个构造函数
+
+            //     data() {
+            //         return {
+            //             count:0 , //这个数据是给我一会定义的组件的
+            //         }
+            //     },
+            //     template:'<button @click="count++">你点击了{{count}}</button>'
+            // })
+
+
+
+        new Vue({
+            el:'#root',
+            components:{
+                mybutton:{
+                // 配置对象 和Vue当中传的配置对象几乎一样 只是不能写el
+                // 可以理解组件就是一个小的vm
+                // Vue.extends 返回的是一个构造函数
+
+                    data() {
+                        return {
+                            count:0 , //这个数据是给我一会定义的组件的
+                        }
+                    },
+                template:'<button @click="count++">你点击了{{count}}</button>'
+              }
+            }
+            
+        })    
+    </script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自定义指令</title>
+</head>
+<body>
+    <div id="root">
+        <p v-text="msg"></p>
+        <p v-upper="msg"></p>
+    </div>
+
+    <div id="root1">
+        <p v-text="msg"></p>
+        <p v-upper="msg"></p>
+    </div>
+
+    <script src="../js/vue.js"></script>
+
+    <script>
+        // 定义全局指令 所有的Vue实例都可以用
+        // 指令名字不包含v-,而且不能是大写
+        Vue.directive('upper',function(element,bindings){
+            // console.log(bindings)//bindings---Object
+            element.textContent = bindings.value.toUpperCase()
+            // textContent只有高级浏览器可以用
+        })//Vue的对象用法
+
+        // 局部指令 只有当前的实例可以使用
+        new Vue({//Vue的函数用法
+            el:'#root',
+            data() {
+                return {
+                    msg:'i love you'
+                }
+            },
+            // 局部指令是在配置Vue的配置对象中去配置
+            directives:{
+                upper(element,bindings){
+                    element.textContent = bindings.value.toUpperCase()
+                },
+                
+            }
+        })
+
+        new Vue({
+            el:'#root1',
+            data() {
+                return {
+                    msg:'happay day'
+                }
+            },
+        })
+    </script>
+</body>
+</html>
