@@ -3,6 +3,7 @@ const path = require('path')
 var HtmlWebpackPlugin = require('html-webpack-plugin'); //构造函数
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 module.exports = {
   // 入口
   entry: './src/main.js',
@@ -59,7 +60,12 @@ module.exports = {
       template: './src/public/index.html'
     }),//加一个配置对象让vue可以找到对应的模板挂载点 ,本质就是让vue去找对应的html文件
     new CleanWebpackPlugin(),
-    new VueLoaderPlugin()
+    new VueLoaderPlugin(),
+    new CopyWebpackPlugin([{
+      from:'./src/public',
+      to:path.resolve(__dirname, 'dist'),//配置的是绝对路径
+      ignore: ['index.html'] ,//必须是一个数组
+    }]),//为了把css拷贝到dist下
   ],
   // 基础配置
   devServer: {

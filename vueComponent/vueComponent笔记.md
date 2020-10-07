@@ -219,6 +219,7 @@ export default {
 <script>
 // 1.引入
 import MyButton from "./components/MyButton";
+
 export default {
   name: "App",
   //2. 注册
@@ -226,9 +227,10 @@ export default {
     MyButton,
   },
 };
+
 </script>
 
-<style  scoped> 
+<style> 
 <!-- lang="less" 一定不要加 加了后期会报错 -->
 </style>
 ```
@@ -369,3 +371,144 @@ resolve: {
   import MyButton from '@/components/MyButton'
 
 ```
+
+
+
+## 10.删文件
+* 1.components里边的 MyButton.vue ×
+* 2.public中的 css/images ×
+* 3.App.vue中的内容删了重新写
+
+## 11. main.js
+```
+// import indexCss from './public/css/index.css'
+// import imgSrc from './public/images/timg.jpg'
+
+// let pp = document.createElement('p')
+// pp.innerHTML = '我爱你赵丽颖'
+// document.body.appendChild(pp)
+
+// const myFunc = () => {
+//     console.log('haha')
+// }
+
+// // 创建一个img的标签
+// let imgNode = new Image()
+// imgNode.src = imgSrc
+
+// // 把imgNode添加到body后面去
+// document.body.appendChild(imgNode)
+
+// import Vue from 'vue/dist/vue.esm.js'//带解析器的vue
+ import Vue from 'vue'
+//  1.导入App
+ import App from './App.vue'
+ // 一定要加 .vue 不然会报错
+
+ new Vue({
+     el:'#root',
+    //  render:function(createElement){
+    //      return createElement(App)
+    //  }
+
+
+     render: h => h(App) //注册我们的App组件,并且会把App组件进行渲染,并且是 runtime-only 版本的vue可以使用
+      //箭头函数 h是函数 render是对象的方法 
+
+     /**
+      * ES6的写法:
+      *  render: h => h(App) //注册我们的App组件,并且会把App组件进行渲染,并且是 runtime-only 版本的vue可以使用
+      //箭头函数 h是函数 render是对象的方法
+
+      * ES5的写法
+      * render:function(h){
+      *     return h(App)
+      * }
+      */
+
+    //  2.注册App
+    //  components:{
+    //      App
+    //  },
+    //  template:'<App/>' //就是vue渲染的模板,之前我们写在挂载点下边，现在我们换了个地方去写
+
+ })
+```
+
+## 12.comment组件化开发（案例）
+### 1.静态页面实现：
+* 1.拆分组件(拆分页面 定义组件) 能细则细,最大化重用
+```
+组件命名规则: 1.按功能 2.按位置
+
+最外边一定是一个组件 App.vue
+  左侧功能 --- 添加评论  拆成组件 Add.vue
+  右侧列表功能---列举所有评论 拆成组件 List.vue
+      每一项评论  Item.vue
+
+```
+
+```
+components文件夹下创建文件
+  Add.vue
+  List.vue
+  Item.vue
+
+src文件夹下创建文件
+  App.vue
+
+public文件夹下创建文件夹 css 
+把bootstrap.css放到css中
+在index.html中引入
+<link rel="stylesheet"  href="./css/bootstrap.css">
+
+```
+
+* 2.组装组件
+```
+1.App.vue中
+引入
+import Add from '@/components/Add'
+import List from '@/components/List'
+注册
+components:{
+    Add,
+    List
+  }
+使用
+<Add></Add>
+<List></List>
+
+2.List.vue中
+引入
+import Item from '@/components/Item'
+注册
+components:{
+      Item
+  }
+使用
+ <Item></Item>
+
+```
+* 3.渲染组件---main.js
+```
+import Vue from 'vue'
+import App from '@/App'
+
+Vue.config.productionTip = false //页面上的提示信息被禁止
+
+new Vue({
+  el:'#root',
+  render: h => h(App)
+})
+```
+
+```
+报错:
+Refused to apply style from 'http://localhost:9000/css/bootstrap.css' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.
+
+
+```
+* 		注意：webpack配置拷贝public下的css文件 "npm install copy-webpack-plugin@5.1.1",
+
+### 2.动态交互实现:

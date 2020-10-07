@@ -1,27 +1,35 @@
 <template>
+  <div id="app">
   <div>
-    <!-- 3.使用 -->
-    <MyButton></MyButton>
-    <MyButton></MyButton>
-    <MyButton></MyButton>
+    <header class="site-header jumbotron">
+      <div class="container">
+        <div class="row">
+          <div class="col-xs-12">
+            <h1>请发表对React的评论</h1>
+          </div>
+        </div>
+      </div>
+    </header>
+    <div class="container">
+     <Add></Add>
+     <List></List>
+    </div>
   </div>
+</div>
 </template>
 
 <script>
-// 1.引入
-// import MyButton from "./components/MyButton"
-import MyButton from '@/components/MyButton'
-// 一定要加 .vue 不然会报错
+import Add from '@/components/Add'
+import List from '@/components/List'
 export default {
-  name: "App",
-  //2. 注册
-  components: {
-    MyButton,
-  },
-};
+  name:'App',
+  components:{
+    Add,
+    List
+  }
+}
 </script>
 
-<style lang="less" scoped>
+<style>
+  
 </style>
-
-
