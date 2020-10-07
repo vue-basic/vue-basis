@@ -2,6 +2,7 @@
 const path = require('path')
 var HtmlWebpackPlugin = require('html-webpack-plugin'); //构造函数
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
 module.exports = {
   // 入口
   entry: './src/main.js',
@@ -30,7 +31,7 @@ module.exports = {
       // 解析css
       {
         test: /\.css$/,
-        use: [ 'style-loader', 'css-loader' ] //前后顺序不能变 解析时从右向左 css是在js中的,style-loader把js中的css放到style中
+        use: ['vue-style-loader', 'css-loader'] //前后顺序不能变 解析时从右向左 css是在js中的,style-loader把js中的css放到style中
       },
       // 解析图片 
       {
@@ -41,24 +42,41 @@ module.exports = {
             options: {
               limit: 8192  //小于8kb的图片转化为base64字符串代替,为了减少请求次数
             }
-            
+
           }
         ]
-      }
+      },
+      // 配置vue相关loader
+      {
+        test: /\.vue$/,
+        loader: 'vue-loader'
+      },
     ]
   },
   //   插件 plugins
   plugins: [
-    new HtmlWebpackPlugin(),
-    new CleanWebpackPlugin()
+    new HtmlWebpackPlugin({
+      template: './src/public/index.html'
+    }),//加一个配置对象让vue可以找到对应的模板挂载点 ,本质就是让vue去找对应的html文件
+    new CleanWebpackPlugin(),
+    new VueLoaderPlugin()
   ],
   // 基础配置
   devServer: {
-    port: 9000 , //端口
-    open:true,//自动打开浏览器
-    quiet:true,//log日志
+    port: 9000, //端口
+    open: true,//自动打开浏览器
+    quiet: true,//log日志
   },
-  devtool:'cheap-module-eval-source-map'
+  devtool: 'cheap-module-eval-source-map',
+  // 自动解析
+  resolve: {
+    extensions: [".js", ".json", ".vue"],
+    // 配置别名
+    alias: {
+      '@': path.resolve(__dirname, 'src') //这个别名代表以后@就是src的绝对路径
+    }
+  },
+
 };
 
 

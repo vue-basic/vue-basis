@@ -1,0 +1,209 @@
+day03
+
+15、生命周期钩子（回调函数）
+	给我们机会可以干预vue的工作流程
+	生命周期的执行顺序是固定的
+	
+	创建前  初始化数据前    数据打印看不到
+	创建后	初始化数据后    数据打印可以看到
+
+	挂载前	初始页面不显示  初始页面的元素看不到
+	挂载后	初始页面显示	初始页面元素可以看到
+
+	更新前	页面更新前	实例数据是对的页面渲染的数据是错的
+	更新后	页面更新后	实例数据是对的页面渲染的数据是对的
+
+	销毁前	实例销毁前	在销毁前内部清除定时器
+	销毁后	实例销毁后	一般不用
+
+	使用mounted和beforeDestory比较频繁，mounted内部我们经常去做异步操作，添加事件 定时器  ajax
+	当调用了vm.$destroy(),	beforeDestory和destoryed才会执行，beforeDestory做收尾工作：清除定时器等
+
+
+
+16、过渡和动画的实现
+	参考官网
+	类名会自动添加给需要的元素，也就是transition标签内部的元素
+	
+
+17、自定义过滤器（参考官网）
+	展示数据的时候，对数据进行处理（格式化之后再显示，不会影响原数据） 
+	使用moment插件
+	定义全局过滤器
+		Vue.filter('过滤器名字'，回调函数)；
+	定义局部过滤器
+		在vm当中fliters对象当中配置
+
+18、vue的内置指令
+	v-text
+	v-html
+	v-on       //绑定事件   简写@
+	v-bind	   //单向数据绑定  ：
+	v-for	   //列表渲染	
+	v-if	   //条件渲染
+	v-else		
+	v-show	   //条件渲染
+	ref	   //为特定的元素添加引用标识，实例的$refs内部可以获取到
+
+19、自定义指令(和定义过滤器很像，参考官网)
+	
+	定义全局指令
+		Vue.directive('过滤器名字'，回调函数)；
+	定义局部指令
+		在vm当中directives对象当中配置
+
+	注意：指令的名称必须是全小写，不能大写
+
+
+20、自定义插件（参考官网）
+	插件的作用：
+		定义插件对象，为Vue和Vue的实例添加一些额外功能
+
+	插件对象必须声明使用  Vue.use（）
+
+
+
+
+
+
+
+
+
+
+
+21、自定义组件（非单文件组件）
+
+	定义全局组件：
+		复杂方式：
+			1、定义组件，本质是通过Vue.extend(option配置对象)定义一个组件函数（以后用来作为构造函数使用）
+			2、注册组件，本质就是为组件定义一个组件名称（组件标签名） Vue.component('标签名'，组件函数)
+			3、使用组件，组件标签名在解析的时候会自动对应到每一个组件函数的实例，每个实例服务一个组件标签
+		简化方式：
+			简化方式： Vue.component('标签名'，option配置对象)
+
+		组件当中的data选项为什么非得是一个函数，而不能是一个对象？
+
+	定义局部组件：
+		
+		
+	
+	
+	缺点：
+		这样定义组件麻烦、模板没提示
+		样式没法搞，
+		没法使用模块化解析ES6语法
+
+	
+
+22、单文件组件（把上面的父子组件改为单文件组件）
+
+	1、先在你的项目当中创建一个components文件夹，用于放置我们后期定义的组件（配置对象）
+	2、在你写代码的地方，一般我们需要创建一个App.vue的文件，它用于组装我们定义好的组件，App本质也是一个组件
+	3、vm实例最终只需要去把App组件给注册然后去渲染就好了
+
+	
+	
+	一个.vue文件，里面包含了组建的结构样式和行为，其实本质就是我们的配置对象（文件）
+	写法高亮 比较明了  但是需要模块化  需要搭建环境
+
+	
+
+23、手动搭建项目环境(参考官方文档就可以了~ 不需要死记硬背)
+
+	1、npm init 手动创建package.json/或者npn init  
+		主要：name   version   scripts   dependencies  devDependencies
+	2、创建src文件夹
+	3、src内部创建public文件夹
+	4、src内部创建index.js(main.js)
+	5、public内部创建index.html
+	6、index.js写点测试代码
+	7、把index引入到index.html 手动运行，看看是否成功
+
+
+	8、改为模块化，把引入的index.js删除，我们需要自动引入
+	9、安装webpack   最好是不要全局安装    
+		npm i -D  webpack  webpack-cli 			卸载:uninstall	
+		npm install webpack webpack-cli -D
+
+	 	yarn add -D webpack webpack-cli        卸载:remove
+
+
+	10、书写webpack的配置文件（参考官方文档）   入口  出口  module   plugins
+
+					// 引入path
+					const path = require('path')
+					module.exports = {
+						// 入口
+						entry:'./src/main.js',
+						// 出口
+						output: {
+							path: path.resolve(__dirname, 'dist'),
+							// __dirname 当前文件所在的目录名,并且是绝对路径  在设置出口的目录路径
+							filename: 'main.js'
+						},
+						//   loader
+						module: {
+							rules: [
+							//   配置各种loader
+							]
+						},
+						//   插件 plugins
+						plugins: [
+						
+						],
+					};
+
+
+
+
+	11、yarn webpack可以直接运行    npm需要配置scripts启动选项 npm run 去启动
+		"scripts": {
+    		"start": "webpack --mode development"
+  		},
+
+
+	12、运行之后html和生成的js不会自动引用      配置插件html-webpack-plugin打包连带html文件
+
+
+	13、每次运行webpack  dist内部不会自动清除，那么我们需要安装插件自动清除dist, clean-webpack-plugin
+			clean-webpack-plugin 官网找不见 找基友网站github
+			const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+
+
+
+
+	14、配置loader 解析ES6语法为ES5   babel-loader 认识import和export
+	15、配置loader 打包css文件   css-loader  style-loader  记得把css文件引入到index.js
+	16、配置loader 打包图片文件  file-loader  url-loader
+
+
+
+
+	17、每次更改代码都要去重新打包，那么我们可以使用开发服务器插件自动打包 webpack-dev-server，
+		但是修改webpack配置还是要重新启动
+	18、配置devtool 定位错误位置为原始代码的哪一行
+	19、基本的包配置和webpack配置也就完成
+
+
+
+24、组件模板解析
+	定义主子组件
+
+	1、安装vue
+	2、在index.js当中写vue的基础架子
+	3、把App.vue导入到index.js当中进行渲染
+	4、配置vue相关loader 插件  
+		1、安装
+		2、配置loader
+		3、配置插件
+		4、记得style-loader要修改为vue-style-loader
+	
+	5、resolve的配置解决导入.vue文件省略后缀名问题
+	
+	
+	解析两种方式：
+		1、render：h => h(App)
+
+		2、components注册组件，template解析，但是vue导入需要导入带解析器的版本
+
+

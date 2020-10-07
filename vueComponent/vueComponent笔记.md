@@ -152,4 +152,220 @@ npm run dev 用webpack-dev-server去跑的,它跑在服务器上,运行在内存
 5.
 每次更改代码都要去重新打包，那么我们可以使用开发服务器插件自动打包 webpack-dev-server，
 但是修改webpack配置还是要重新启动
+
+6.webpack.config.js
+ devtool:'cheap-module-eval-source-map'
+```
+
+# day04
+## 1.基本步骤
+
+```
+1.创建components文件夹,在内部去定义MyButton组件
+2.在src内部创建App组件用来组装以后所有的组件
+3.在Vue当中去注册App组件并且进行渲染
+```
+
+```
+1.在src里边创建一个文件夹 components
+2.在components里边新建一个文件 MyButton.vue
+3.在src下创建文件 App.vue
+```
+
+
+## 2.MyButton.vue 定义组件---定义配置对象
+```
+<template>
+    <div>
+        <button @click="count++">点击了{{count}}次</button>
+        <h2>我爱你赵丽颖</h2>
+    </div>
+</template>
+
+<script>
+export default {
+    name:'MyButton',
+    data() {
+        return {
+            count:0
+        }
+    },
+}
+</script>
+
+<style lang="less" scoped>
+// scoped 当组件如果多的时候,如果不加scoped,会影响其他的组件
+// 加了scoped 只会影响本组件的h2,不会影响其他的组件
+    h2{
+        color: hotpink;
+    }
+</style>
+
+```
+
+* 将组件合并到App中
+
+## 3.App.vue
+```
+<template>
+  <div>
+    <!-- 3.使用 -->
+    <MyButton></MyButton>
+    <MyButton></MyButton>
+    <MyButton></MyButton>
+  </div>
+</template>
+
+<script>
+// 1.引入
+import MyButton from "./components/MyButton";
+export default {
+  name: "App",
+  //2. 注册
+  components: {
+    MyButton,
+  },
+};
+</script>
+
+<style  scoped> 
+<!-- lang="less" 一定不要加 加了后期会报错 -->
+</style>
+```
+* App 需要靠Vue渲染
+
+## 4.安装Vue (必须装)
+* npm install vue -S
+
+* App也是一个大的组件
+
+## 5.main.js
+```
+// import indexCss from './public/css/index.css'
+// import imgSrc from './public/images/timg.jpg'
+
+// let pp = document.createElement('p')
+// pp.innerHTML = '我爱你赵丽颖'
+// document.body.appendChild(pp)
+
+// const myFunc = () => {
+//     console.log('haha')
+// }
+
+// // 创建一个img的标签
+// let imgNode = new Image()
+// imgNode.src = imgSrc
+
+// // 把imgNode添加到body后面去
+// document.body.appendChild(imgNode)
+
+ import Vue from 'vue'
+//  1.导入App
+ import App from './App.vue'
+ // 一定要加 .vue 不然会报错
+
+ new Vue({
+     el:'#root',
+    //  2.注册App
+     components:{
+         App
+     },
+     template:'<App/>' //就是vue渲染的模板,之前我们写在挂载点下边，现在我们换了个地方去写
+
+ })
+```
+## 6.index.html中创建挂载点
+```
+<div id="root></div>
+```
+
+## 2.基本步骤
+```
+配置vue-loader
+1.安装
+2.配置loader
+3.配置插件 插件不需要下载 安装了vue-loader 里面会带
+4.把原来的style-loader 改为 vue-style-loader
+
+```
+
+## 7.安装loader
+* npm install -D vue-loader vue-template-compiler
+```
+1.在webpack.config.js中配置
+  const VueLoaderPlugin = require('vue-loader/lib/plugin')
+
+      {
+        test: /\.vue$/,
+        loader: 'vue-loader'
+      }
+
+       new VueLoaderPlugin()
+
+将 'style-loader' 替换成 'vue-style-loader' 
+```
+
+```
+// scoped 当组件如果多的时候,如果不加scoped,会影响其他的组件
+// 加了scoped 只会影响本组件的h2,不会影响其他的组件
+```
+
+## 8.报错
+```
+1.[Vue warn]: Cannot find element: #root
+原因:我们的插件 hemlwebpackplugin 没有告诉vue配套的html是谁,得在webpack配置文件实例化这个插件对象的时候,添加配置
+解决:在webpack.config.js中的plugin中设置
+  new HtmlWebpackPlugin({
+      template:'./src/public/index.html'
+    }),//加一个配置对象让vue可以找到对应的模板挂载点 ,本质就是让vue去找对应的html文件
+
+2.[Vue warn]: You are using the runtime-only build of Vue where the template compiler is not available. Either pre-compile the templates into render functions, or use the compiler-included build.
+原因:因为而欧美让你默认导入的vue是不带解析器的版本,所以我们自己注册和配置的模板没办法去解析
+解决:
+1.不用自己写注册和template,使用下面的render函数去做
+ render: h => h(App) //注册我们的App组件,并且会把App组件进行渲染,并且是 runtime-only 版本的vue可以使用
+      //箭头函数 h是函数 render是对象的方法
+ //内部会带着解析的功能
+  
+2.
+ES5的写法
+      * render:function(h){
+      *     return h(App)
+      * }
+
+3.  render:function(createElement){
+         return createElement(App)
+    }
+
+<!-- 使用自己写的注册和template配置,把vue导入的版本修改 -->
+4.把导入的vue改为不是runtime-only版本
+import Vue from 'vue/dist/vue.esm.js'//带解析器的vue
+
+ //  2.注册App
+     components:{
+         App
+     },
+     template:'<App/>' //就是vue渲染的模板,之前我们写在挂载点下边，现在我们换了个地方去写s
+```
+
+## 9.resove(解析)
+```
+1.resolve
+导入组件时不加后缀名.vue会报错的解决方法,在webpack.config.js中配置resolve
+ resolve:{
+    extensions: [".js", ".json",".vue"]
+  }
+
+2.alias 自动解析包含的扩展名文件 以后导入不用带扩展名
+resolve: {
+    extensions: [".js", ".json", ".vue"],
+    // 配置别名
+    alias: {
+      '@': path.resolve(__dirname, 'src') //这个别名代表以后@就是src的绝对路径
+    }
+  },
+
+  引入时就可以用@
+  import MyButton from '@/components/MyButton'
+
 ```
