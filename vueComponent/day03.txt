@@ -114,7 +114,7 @@ day03
 		主要：name   version   scripts   dependencies  devDependencies
 	2、创建src文件夹
 	3、src内部创建public文件夹
-	4、src内部创建main.js
+	4、src内部创建index.js(main.js)
 	5、public内部创建index.html
 	6、index.js写点测试代码
 	7、把index引入到index.html 手动运行，看看是否成功
@@ -130,27 +130,56 @@ day03
 
 	10、书写webpack的配置文件（参考官方文档）   入口  出口  module   plugins
 
+					// 引入path
+					const path = require('path')
+					module.exports = {
+						// 入口
+						entry:'./src/main.js',
+						// 出口
+						output: {
+							path: path.resolve(__dirname, 'dist'),
+							// __dirname 当前文件所在的目录名,并且是绝对路径  在设置出口的目录路径
+							filename: 'main.js'
+						},
+						//   loader
+						module: {
+							rules: [
+							//   配置各种loader
+							]
+						},
+						//   插件 plugins
+						plugins: [
+						
+						],
+					};
+
+
 
 
 	11、yarn webpack可以直接运行    npm需要配置scripts启动选项 npm run 去启动
-
+		"scripts": {
+    		"start": "webpack --mode development"
+  		},
 
 
 	12、运行之后html和生成的js不会自动引用      配置插件html-webpack-plugin打包连带html文件
 
 
 	13、每次运行webpack  dist内部不会自动清除，那么我们需要安装插件自动清除dist, clean-webpack-plugin
+			clean-webpack-plugin 官网找不见 找基友网站github
+			const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 
 
-	14、配置loader 解析ES6语法为ES5   babel-loader
+
+	14、配置loader 解析ES6语法为ES5   babel-loader 认识import和export
 	15、配置loader 打包css文件   css-loader  style-loader  记得把css文件引入到index.js
 	16、配置loader 打包图片文件  file-loader  url-loader
 
 
 
 
-	17、每次更改代码都要去重新打包，那么我们可以使用开发服务器插件自动打包 webpck-dev-server，
+	17、每次更改代码都要去重新打包，那么我们可以使用开发服务器插件自动打包 webpack-dev-server，
 		但是修改webpack配置还是要重新启动
 	18、配置devtool 定位错误位置为原始代码的哪一行
 	19、基本的包配置和webpack配置也就完成
