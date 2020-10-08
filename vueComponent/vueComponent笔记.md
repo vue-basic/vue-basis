@@ -591,3 +591,91 @@ props组件间通信 是通过属性传递数据
 只能用于父子之间 一级一级进行传递
 ```
 
+### 2.增加评论的功能 Add.vue
+* 最终要点击提交按钮 添加事件 @click="addC"
+
+```
+1.收集数据Add.vue
+        <input type="text" class="form-control" placeholder="用户名" v-model="username" />
+        <textarea
+          class="form-control"
+          rows="6"
+          placeholder="评论内容"
+          v-model="content"
+        ></textarea>
+
+   data() {//data当中放的是初始化数据和要收集的数据 
+      return {//对象书无序的
+          username:'',
+          content:'',
+      }
+```
+```
+在Add.vue中
+methods:{
+      addC(){
+        // 点击提交,要执行的回调函数
+
+        // 收集数据形成新的comment对象 v-model
+        let {username,content} = this //解构赋值
+        // 验证数据的可靠性
+        if(username.trim()&&content.trim()){
+            let id = Date.now()
+            let comment = {
+                username,
+                content,
+                id
+            }
+
+        // 把新的comment对象添加到我们的comments数组当中
+        // 数据在哪定义,更新数据的方法就应该在哪定义,而其他组件想要去修改数据,必须调用更新数据的方法去做
+        // 在Add里边想要去修改App里边的数据 ,数据是定义在App里边的,那么真正修改App数据的方法就应该定义在App里边
+        } 
+      }
+  }
+```
+
+```
+// 数据在哪定义,更新数据的方法就应该在哪定义,而其他组件想要去修改数据,必须调用更新数据的方法去做
+// 在Add里边想要去修改App里边的数据 ,数据是定义在App里边的,那么真正修改App数据的方法就应该定义在App里边
+在App.vue中
+ methods:{
+    addComment(comment){
+      this.comments.unshift(comment)
+    }
+  },
+
+  <Add :addComment="addComment"></Add>
+  传过去的是一个函数数据
+
+  在Add里边声明接收
+  props:['addComment'],
+
+  methods里边
+  调用方法去改数据
+        this.addComment(comment)
+
+         methods:{
+          addC(){
+            // 点击提交,要执行的回调函数
+
+            // 收集数据形成新的comment对象 v-model
+            let {username,content} = this //解构赋值
+            // 验证数据的可靠性
+            if(username.trim()&&content.trim()){
+                let id = Date.now()
+                let comment = {
+                    username,
+                    content,
+                    id
+                }
+            // 把新的comment对象添加到我们的comments数组当中
+            // 数据在哪定义,更新数据的方法就应该在哪定义,而其他组件想要去修改数据,必须调用更新数据的方法去做
+            // 在Add里边想要去修改App里边的数据 ,数据是定义在App里边的,那么真正修改App数据的方法就应该定义在App里边
+            this.addComment(comment)
+        } 
+      }
+  }
+
+```
+

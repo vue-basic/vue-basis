@@ -11,7 +11,7 @@
       </div>
     </header>
     <div class="container">
-     <Add></Add>
+     <Add :addComment="addComment"></Add>
      <List :comments="comments"></List>
     </div>
   </div>
@@ -34,6 +34,11 @@ export default {
         {id:2,content:'Vue很999',username:'bbb'},
         {id:3,content:'Vue很888',username:'ccc'},
       ]
+    }
+  },
+  methods:{
+    addComment(comment){
+      this.comments.unshift(comment)
     }
   },
 }
