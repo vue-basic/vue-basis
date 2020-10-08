@@ -64,7 +64,7 @@ module.exports = {
     new CopyWebpackPlugin([{
       from:'./src/public',
       to:path.resolve(__dirname, 'dist'),//配置的是绝对路径
-      ignore: ['index.html'] ,//必须是一个数组
+      ignore: ['index.html'] ,//必须是一个数组 
     }]),//为了把css拷贝到dist下
   ],
   // 基础配置

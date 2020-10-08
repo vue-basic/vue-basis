@@ -3,14 +3,18 @@
     <div class="handle">
       <a href="javascript:;">删除</a>
     </div>
-    <p class="user"><span>xxx</span><span>说:</span></p>
-    <p class="centence">React不错!</p>
+    <p class="user">
+        <span>{{comment.username}}</span>
+        <span>说:</span>
+    </p>
+    <p class="centence">{{comment.content}}!</p>
   </li>
 </template>
 
 <script>
 export default {
   name: "Item",
+  props:['comment']
 };
 </script>
 

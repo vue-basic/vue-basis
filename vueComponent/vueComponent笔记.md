@@ -512,3 +512,82 @@ Refused to apply style from 'http://localhost:9000/css/bootstrap.css' because it
 * 		注意：webpack配置拷贝public下的css文件 "npm install copy-webpack-plugin@5.1.1",
 
 ### 2.动态交互实现:
+* 动态组件界面
+#### 1、初始化数据动态显示
+```
+1.初始化数据分析：
+				数据类型     一般我们的数据最终都是放在一个数组内部，数组内部放对象  [{},,{},{}] 每一个对象代表一个评论信息
+				数据名称     comments:[{},{},{}]
+				定义在哪个组件   （看哪个组件还是哪些个组件使用到）
+					数据用到不是说展示就代表用，而是说数据的增删改查都叫用到数据
+					如果这个数据只是某一个组件用的，那么数据就在这一个组件当中定义
+					如果这个数据在某些个组件当中用的，那么就找这些个共同的祖先组件去定义
+
+        组件标签名和属性名大小写问题：
+				基本规则：要么原样去写，要么转小写中间用-连接
+				AddComment       <AddComment/>  或者  <add-comment>
+```
+
+* 数据:---App.vue
+```
+ data() {
+    return {
+      comments:[
+        {id:1,content:'Vue很666',username:'aaa'},
+        {id:2,content:'Vue很999',username:'bbb'},
+        {id:3,content:'Vue很888',username:'ccc'},
+      ]
+    } 
+  },
+```
+
+#### 2、交互（与用户的交互）
+* 增删改查
+* 查
+* 增删改
+
+## 面试必问 --- 组件间通信(组件间如何把数据传过去)
+* App组件相当于Add和List组件的爹  
+* App组件相当于是Item组件的爷爷
+* Add组件相当于是Item组件的叔叔或者伯伯
+* List组件相当于是Item组件的爹
+
+* App中的数据 -------> Item中
+```
+属性传递 
+prop:属性
+props:可以传递多个属性
+
+父组件当中可以通过属性传值,传递到子组件当中;但是子组件当中必须声明接收,不然没法用
+
+1.在App.vue中 
+<List :comments="comments"></List> 
+带冒号表示绑定数据 把数据传过去  属性名是自己取的
+这样写把comments的数据传到List内部取了
+
+2.在List中
+List中接收的时候需要声明接收属性
+ props:['comments'] //声明接收父组件传递过来的属性
+//   一旦声明接收了,这个comments就相当于在List的data中的数据,也就是说comments是List的数据了
+
+3.遍历item 通过属性传值把数据传给Item
+<Item v-for="(comment,index) in comments" :key="comment.id" :comment="comment"></Item>
+<!-- Item有几项是由数据决定的 用v-for遍历 再一次传递数据给Item  把 当前遍历的item给Item传过去-->
+
+4.在Item组件中接收
+ props:['comment']
+
+ 数组使用
+  <p class="user">
+        <span>{{comment.username}}</span>
+        <span>说:</span>
+    </p>
+  <p class="centence">{{comment.content}}!</p>
+```
+
+### 1.props
+```
+props组件间通信 是通过属性传递数据 
+只能用于父子之间 一级一级进行传递
+```
+
