@@ -679,3 +679,51 @@ methods:{
 
 ```
 
+## 3.删除评论的功能  Item.vue
+```
+1.Item.vue
+<a href="javascript:;"  @click="deleteC">删除</a>
+
+点哪个删哪个 在数组中删拿的是下标 index 
+所以 List.vue 需要把 index 传给 Item
+<Item v-for="(comment,index) in comments" :key="comment.id" :comment="comment" :index="index"></Item>
+
+Item.vue
+ props:['comment','index'],
+
+删的时候 动数据 必须调用数据所在地方的删除方法
+
+在App.vue中定义删除评论的方法
+ deleteComment(index){
+      this.comments.splice(index,1)
+    }
+
+有了这个方法要先给List.vue传过去
+ <List :comments="comments" :deleteComment="deleteComment"></List>
+
+List.vue要接收
+props:['comments','deleteComment'] 
+
+List.vue把这个方法传给Item.vue
+<Item v-for="(comment,index) in comments"
+          :key="comment.id"
+          :comment="comment" 
+          :index="index" 
+          :deleteComment="deleteComment"
+          ></Item>
+
+Item.vue中接收
+props:['comment','index','deleteComment'],
+
+使用:
+methods:{
+      deleteC(){
+        //  点哪个删哪个 在数组中删拿的是下标 index 
+
+        // 删的时候 动数据 必须调用数据所在地方的删除方法
+        this.deleteComment(this.index)
+      }
+  }
+
+```
+

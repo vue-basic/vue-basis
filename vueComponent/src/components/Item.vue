@@ -1,7 +1,7 @@
 <template>
   <li class="list-group-item">
     <div class="handle">
-      <a href="javascript:;">删除</a>
+      <a href="javascript:;"  @click="deleteC">删除</a>
     </div>
     <p class="user">
         <span>{{comment.username}}</span>
@@ -14,7 +14,15 @@
 <script>
 export default {
   name: "Item",
-  props:['comment']
+  props:['comment','index','deleteComment'],
+  methods:{
+      deleteC(){
+        //  点哪个删哪个 在数组中删拿的是下标 index 
+
+        // 删的时候 动数据 必须调用数据所在地方的删除方法
+        this.deleteComment(this.index)
+      }
+  }
 };
 </script>
 

@@ -51,9 +51,12 @@ export default {
         // 数据在哪定义,更新数据的方法就应该在哪定义,而其他组件想要去修改数据,必须调用更新数据的方法去做
         // 在Add里边想要去修改App里边的数据 ,数据是定义在App里边的,那么真正修改App数据的方法就应该定义在App里边
         this.addComment(comment)
-        }
 
-        
+        this.username = ''
+        this.content = ''
+        }else{
+            alert('请输入评论信息')
+        }
       }
   }
 };
