@@ -585,11 +585,117 @@ List中接收的时候需要声明接收属性
   <p class="centence">{{comment.content}}!</p>
 ```
 
-### 1.props
+### 1.props组件间通信
 ```
 props组件间通信 是通过属性传递数据 
 只能用于父子之间 一级一级进行传递
+
+props 组件通信的方式：
+		props组件通信，只适用于父子组件传递
+			父给子传：可以传递函数数据和非函数数据  
+
+        父给子传非函数数据:确实是爹给儿子的数据
+        <List :comments="comments"></List> 
+
+        /*
+        父给子传的非函数数据
+        App中有数据comments,在App中能看到List,然后App把comments通过属性传值传给了它的儿子List,而List在它的内部通过接收属性props   props:['comments','deleteComment'] 可以接收到,那么这个comments在List的内部就可以使用
+               <Item v-for="(comment,index) in comments"
+                  :key="comment.id"
+                  :comment="comment" 
+                  :index="index" 
+                  :deleteComment="deleteComment"
+              ></Item>
+        所以说如果爹给儿子传的是非函数数据,那确确实实就是爹给儿子的数据,
+        */
+
+        App.vue
+        data() {
+          return {
+            comments:[
+              {id:1,content:'Vue很666',username:'aaa'},
+              {id:2,content:'Vue很999',username:'bbb'},
+              {id:3,content:'Vue很888',username:'ccc'},
+            ]
+          }
+      },
+
+        父给子传函数数据:本质上是爹想要儿子的数据  因为函数定义是在父里边定义的,而调用是在子里边调用的  
+        而函数关键看调用 一调用传的实参 这边就接收到了
+        <Add :addComment="addComment"></Add>
+        <List :comments="comments" :deleteComment="deleteComment"></List>
+
+        methods:{//函数定义 定义不执行
+          addComment(comment){
+            this.comments.unshift(comment)
+          },
+          deleteComment(index){
+            this.comments.splice(index,1)
+          }
+        },
+
+        /*
+          父给子传的函数数据
+          Add.vue
+
+          一点击提交按钮,它就会调addC这个函数,而在addC中 自己封装了个对象,一个新的comment
+
+             // 收集数据形成新的comment对象 v-model
+                let {username,content} = this //解构赋值
+                  // 验证数据的可靠性
+                  if(username.trim()&&content.trim()){
+                      let id = Date.now()
+                      let comment = {
+                          username,
+                          content,
+                          id
+                      }
+                  }
+                }
+
+          儿子想把comment对象放到爹里边的comments里边去,儿子就要把comment传给爹,怎么传呢?
+
+            最终调的是爹传给它的一个方法 this.addComment(comment)
+            我们在App.vue里边定义了一个函数数据
+              addComment(comment){
+                this.comments.unshift(comment)
+              },
+            这个函数定义定义在爹里边,父把这个函数数据通过属性传值传给了它的儿子 <Add :addComment="addComment"></Add>
+            儿子在Add.vue中接收 <Add :addComment="addComment"></Add>
+            接收了以后儿子调用这个函数  this.addComment(comment)
+
+            函数只是个对象,传过来的只是个地址 儿子接收到了地址就相当于拿到了函数
+            儿子调的仍是父里边定义的哪个函数
+
+            函数调用:
+            父里边有个形参叫comment,子里边有个实参叫comment  
+            相当于  把儿子里边创建的新的comment,通过实参传过去,给了父里边的形参 爹就拿到子里边的数据了
+
+
+
+        */
+
+        爹把函数传递给儿子 
+        儿子调用,调用的时候儿子怎么给爹传递数据? 形参就是数据
+        this.addComment(comment)
+        this.deleteComment(this.index)
+
+			子给父传：通过调用父传递过来的函数数据，然后通过实际参数给父传数据
+		    
+		不足（不是父子就很麻烦） 比如爷孙关系 父--》子--》孙  |  兄弟关系，就必须先把一个数据给了父亲，然后通过父亲再给另一个
+
+		最基础的通信，用的也是比较多的，所以必须搞定
 ```
+
+
+
+
+
+
+
+
+
+
 
 ### 2.增加评论的功能 Add.vue
 * 最终要点击提交按钮 添加事件 @click="addC"
