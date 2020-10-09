@@ -4,6 +4,7 @@ var HtmlWebpackPlugin = require('html-webpack-plugin'); //构造函数
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+
 module.exports = {
   // 入口
   entry: './src/main.js',

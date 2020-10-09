@@ -347,7 +347,11 @@ import Vue from 'vue/dist/vue.esm.js'//带解析器的vue
      components:{
          App
      },
-     template:'<App/>' //就是vue渲染的模板,之前我们写在挂载点下边，现在我们换了个地方去写s
+     template:'<App/>' //就是vue渲染的模板,之前我们写在挂载点下边，现在我们换了个地方去写
+
+3. Refused to apply style from 'http://localhost:9000/css/bootstrap.css' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.
+
+
 ```
 
 ## 9.resove(解析)
@@ -435,7 +439,8 @@ resolve: {
  })
 ```
 
-## 12.comment组件化开发（案例）
+# 12.comment组件化开发（案例）
+## 1.comment_page
 ### 1.静态页面实现：
 * 1.拆分组件(拆分页面 定义组件) 能细则细,最大化重用
 ```
@@ -831,5 +836,114 @@ methods:{
       }
   }
 
+```
+
+# 13.todoList组件化开发（案例）
+## 2.todos_pages
+### 1.静态页面  
+* 命名按位置
+* 1、拆分页面 定义组件 components
+```
+      上 Header.vue
+      中 Main.vue
+        里 Item.vue
+      下 Footer.vue
+```
+
+* 2、将组件组装到App当中
+```
+1.引入
+App.vue
+import Header from '@/components/Header'
+import Main from '@/components/Main'
+import Footer from '@/components/Footer'
+
+Main.vue
+import Item from '@/components/Item'
+
+2.注册
+App.vue
+components:{
+    Header,
+    Main,
+    Footer
+  }
+
+  Main.vue
+  components:{
+      Item
+  }
+
+3.使用
+App.vue
+      <Header></Header>
+      <Main></Main>
+      <Footer></Footer>
+
+Main.vue
+<Item></Item>
+```
+* 3、渲染组件实现静态页面
+```
+main.js
+
+import Vue from 'vue'
+import App from '@/App'
+
+Vue.config.productionTip = false //页面上的提示信息被禁止
+
+new Vue({
+  el:'#root',
+  render: h => h(App)
+})
+```
+### 2.动态页面
+```
+1.数据定义在App.vue中
+data() {
+    return {
+      todos:[
+        {id:1,content:'抽烟',isOver:false},
+        {id:2,content:'喝酒',isOver:true},
+        {id:3,content:'烫头',isOver:false}
+      ]
+    }
+  },
+
+2.把数据传给Main.vue
+ <Main :todos="todos"></Main>
+
+3.在Main.vue中接收
+ props:{
+    todos:Array
+  }
+
+4.遍历 并把数据传给Item
+ <Item v-for="(todo,index) in todos" :key="todo.id" :todo="todo"></Item>
+
+5.在Item中接收数据
+ props:{
+    todo:Object
+  }
+
+6.在Item中展示数据
+ <span>{{todo.content}}</span>
+```
+
+```
+
+```
+
+# props的写法
+* 1.数组写法
+```
+ props:['comment','index'],
+```
+
+* 2.对象写法
+```
+props:{
+    todo:Object
+  }
 ```
 

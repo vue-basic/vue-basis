@@ -1,57 +1,55 @@
 <template>
-  <li class="list-group-item">
-    <div class="handle">
-      <a href="javascript:;"  @click="deleteC">删除</a>
-    </div>
-    <p class="user">
-        <span>{{comment.username}}</span>
-        <span>说:</span>
-    </p>
-    <p class="centence">{{comment.content}}!</p>
-  </li>
+   <li>
+          <label>
+            <input type="checkbox" :checked="todo.isOver"/>
+            <span>{{todo.content}}</span>
+          </label>
+          <button class="btn btn-danger" style="display:none">删除</button>
+        </li>
 </template>
 
 <script>
 export default {
-  name: "Item",
-  props:['comment','index','deleteComment'],
-  methods:{
-      deleteC(){
-        //  点哪个删哪个 在数组中删拿的是下标 index 
-
-        // 删的时候 动数据 必须调用数据所在地方的删除方法
-        this.deleteComment(this.index)
-      }
+  name:'Item',
+  props:{
+    todo:Object
   }
-};
+}
 </script>
 
-<style>
+<style scoped>
+/*item*/
 li {
-  transition: .5s;
-  overflow: hidden;
+  list-style: none;
+  height: 36px;
+  line-height: 36px;
+  padding: 0 5px;
+  border-bottom: 1px solid #ddd;
 }
 
-.handle {
-  width: 40px;
-  border: 1px solid #ccc;
-  background: #fff;
-  position: absolute;
-  right: 10px;
-  top: 1px;
-  text-align: center;
+li label {
+  float: left;
+  cursor: pointer;
 }
 
-.handle a {
-  display: block;
-  text-decoration: none;
+li label li input {
+  vertical-align: middle;
+  margin-right: 6px;
+  position: relative;
+  top: -1px;
 }
 
-.list-group-item .centence {
-  padding: 0px 50px;
+li button {
+  float: right;
+  display: none;
+  margin-top: 3px;
 }
 
-.user {
-  font-size: 22px;
+li:before {
+  content: initial;
+}
+
+li:last-child {
+  border-bottom: none;
 }
 </style>
