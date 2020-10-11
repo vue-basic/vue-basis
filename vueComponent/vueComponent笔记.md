@@ -894,6 +894,23 @@ new Vue({
  this.$bus.$emit('updateOne',this.index)
  ```  
 
+### 4.消息订阅与发布  PubSub ---- PubSubJS
+```
+1.安装
+npm install pubsub-js
+
+2.导入
+import PubSub from 'pubsub-js'
+
+3.谁想要接收数据就在谁内部订阅,这个回调函数就在谁里边
+var token = PubSub.subscribe('MY TOPIC', function (msg, data) {
+    console.log( msg, data );
+});
+
+4.谁发送数据谁就发布数据
+PubSub.publish('MY TOPIC', 'hello world!');
+PubSub.publishSync('MY TOPIC', 'hello world!');
+```
 
 
 
