@@ -529,7 +529,7 @@ splice() 方法可删除从 index 处开始的零个或多个元素，并且用�
 ```
 ```
 
-### 7..reverse()
+### 7.reverse()
 * 将数组倒序,成功则返回倒序后的数组
 
 ```
@@ -614,6 +614,13 @@ item1, ..., itemX	可选。向数组添加的新项目。
 
 * 返回值  Array	包含被删除项目的新数组，如果有的话。
 
+```
+  // 删除单个todo
+    deleteOne(index){
+      this.todos.splice(index,1)
+    }
+```
+
 ### 3.indexOf()
 * indexOf() 方法可返回某个指定的字符串值在字符串中首次出现的位置。
 
@@ -651,6 +658,19 @@ thisValue	可选。对象作为该执行回调时使用，传递给函数，用�
 * 返回值：	返回数组，包含了符合条件的所有元素。如果没有符合条件的元素则返回空数组。
 
 * filter()和indexOf()结合
+```
+ // 根据App.vue传过来的数据todos计算出来overNum
+  computed: {
+    overNum(){
+     return this.todos.filter(item => item.isOver).length
+
+      // return this.todos.filter(function(item){
+      //   return item.isOver
+      // }).length
+    }
+  }, 
+```
+
 ```
 <body>
     <div id="root">
@@ -731,6 +751,36 @@ thisValue	可选。对象作为该执行回调时使用，传递给函数，用�
         })
     </script>
 </body>
+```
+### 5.unshift()
+```
+定义和用法
+unshift() 方法可向数组的开头添加一个或更多元素，并返回新的长度。
+
+语法
+arrayObject.unshift(newelement1,newelement2,....,newelementX)
+参数	描述
+newelement1	必需。向数组添加的第一个元素。
+newelement2	可选。向数组添加的第二个元素。
+newelementX	可选。可添加若干个元素。
+返回值
+arrayObject 的新长度。
+
+说明
+unshift() 方法将把它的参数插入 arrayObject 的头部，并将已经存在的元素顺次地移到较高的下标处，以便留出空间。该方法的第一个参数将成为数组的新元素 0，如果还有第二个参数，它将成为新的元素 1，以此类推。
+
+请注意，unshift() 方法不创建新的创建，而是直接修改原有的数组。
+
+提示和注释
+注释：该方法会改变数组的长度。
+
+注释：unshift() 方法无法在 Internet Explorer 中正确地工作！
+```
+
+```
+ addTodo(todo){
+      this.todos.unshift(todo)
+    },
 ```
 
 ## 14.阻止事件冒泡
@@ -1395,3 +1445,8 @@ export default {
     }
 }
 ```
+
+## withRoute
+
+墨刀
+

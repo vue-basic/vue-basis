@@ -590,7 +590,7 @@ List中接收的时候需要声明接收属性
   <p class="centence">{{comment.content}}!</p>
 ```
 
-### 1.props组件间通信
+### 1.props组件间通信  ---- 适用于父子之间
 ```
 props组件间通信 是通过属性传递数据 
 只能用于父子之间 一级一级进行传递
@@ -691,7 +691,123 @@ props 组件通信的方式：
 
 		最基础的通信，用的也是比较多的，所以必须搞定
 ```
+### 2.自定义事件 ---- 只适用于子向父通信
+```
+只适用于:子向父通信
+原因:因为父组件内部可以看到子组件对象,可以给子组件对象绑定事件,回调函数在父组件定义
 
+子所调的父中的函数都是在子向父通信
+父给子一个函数目的就是想要子的数据
+子调父中的函数相当于通过实参给父传东西  子向父传数据
+
+做法：在父组件当中可以看到子组件对象，给子组件对象绑定自定义事件$on  回调函数在父组件中
+
+	      在子组件当中，我们需要传递数据的地方，去触发自己身上的事件$emit，调用回调函数中传参给父
+
+  接受数据的组件(父)必须能看到预绑定事件(子)的组件对象，才能绑定 $on()
+	发送数据的组件(子)必须能看到绑定了事件(子)的组件对象，才能触发事件  $emit()
+
+  $on //绑定事件
+  $emit()  分发/触发事件
+  本质上也是通过传参给我们传数据
+
+  $off() //解绑事件 在你需要销毁实例的时候,我们可以善后处理一下
+  $once() //绑定的时候只能触发一次
+```
+* [1].自定义事件的第一种写法----本质
+```
+例子:
+在App.vue这个父组件中可以看到Header这个子组件对象,这样就可以给子组件对象绑定事件
+绑定事件属于异步操作
+
+1.在App中可以看到Header
+<Header :addTodo="addTodo" ref="header"></Header> 
+
+2.给Header绑定事件
+在mounted中挂载
+ // 当你的页面一旦挂载ok,那我就获取这个组件对象,怎么获取?ref
+ 
+ mounted() {
+  // 当你的页面一旦挂载ok,那我就获取这个组件对象,怎么获取?ref
+  // this.$refs.header 代表Header组件对象 这个组件对象身上有一个方法,这个方法其实是在Vue的原型身上 $on
+  // $on在谁后边点的就相当于在谁身上加了自定义事件
+  // 自定义事件分为两部分:事件名(事件类型)和回调函数 
+  // 回调在谁里边，谁一定是接收数据的
+  this.$refs.header.$on('addTodo',this.addTodo)
+},
+
+在Header子身上绑定了一个事件,名字叫addTodo,然后回调时放在App父组件的
+
+4.addTodo这个回调函数留在父组件App中
+ addTodo(todo){
+      this.todos.unshift(todo)
+    },
+
+5.子调父中的函数
+ this.$emit('addTodo',todo)//触发/调用事件
+
+6.$off解绑自定义事件  ---不需要写
+beforeDestroy(){
+  this.$refs.header.$off('addTodo')//解绑儿子身上自定义事件
+},
+```
+
+* 自定义事件第二个写法
+```
+1.在子组件对象身上绑定一个事件
+      <Header @addTodo="addTodo" ></Header> 
+
+2.父定义
+ addTodo(todo){
+      this.todos.unshift(todo)
+    },
+
+3.子调用
+
+```
+
+```
+ /*
+          父给子传的函数数据
+          Add.vue
+
+          一点击提交按钮,它就会调addC这个函数,而在addC中 自己封装了个对象,一个新的comment
+
+             // 收集数据形成新的comment对象 v-model
+                let {username,content} = this //解构赋值
+                  // 验证数据的可靠性
+                  if(username.trim()&&content.trim()){
+                      let id = Date.now()
+                      let comment = {
+                          username,
+                          content,
+                          id
+                      }
+                  }
+                }
+
+          儿子想把comment对象放到爹里边的comments里边去,儿子就要把comment传给爹,怎么传呢?
+
+            最终调的是爹传给它的一个方法 this.addComment(comment)
+            我们在App.vue里边定义了一个函数数据
+              addComment(comment){
+                this.comments.unshift(comment)
+              },
+            这个函数定义定义在爹里边,父把这个函数数据通过属性传值传给了它的儿子 <Add :addComment="addComment"></Add>
+            儿子在Add.vue中接收 <Add :addComment="addComment"></Add>
+            接收了以后儿子调用这个函数  this.addComment(comment)
+
+            函数只是个对象,传过来的只是个地址 儿子接收到了地址就相当于拿到了函数
+            儿子调的仍是父里边定义的哪个函数
+
+            函数调用:
+            父里边有个形参叫comment,子里边有个实参叫comment  
+            相当于  把儿子里边创建的新的comment,通过实参传过去,给了父里边的形参 爹就拿到子里边的数据了
+
+
+
+        */
+```
 
 
 
@@ -900,6 +1016,9 @@ new Vue({
 ### 2.动态页面
 ```
 1.数据定义在App.vue中
+定义一个标志
+  <input type="checkbox" :checked="todo.isOver"/>
+
 data() {
     return {
       todos:[
@@ -930,9 +1049,176 @@ data() {
  <span>{{todo.content}}</span>
 ```
 
+* 用户交互
+
+### Header.vue
+```
+1.在Header.vue中添加事件
+<input type="text" placeholder="请输入你的任务名称，按回车键确认" @keyup.enter="addT" v-model="content"/>
+v-model="content" 而content只是它自己内部收集,所以要放在它自己里边
+
+2.在App.vue中给Header.vue传入addTodo这个函数
+<Header :addTodo="addTodo"></Header>
+
+addTodo这个函数一定是在App.vue中定义的
+ methods:{
+    addTodo(todo){
+      this.todos.unshift(todo)
+    }
+  },
+
+3.在Header.vue中接收addTodo
+ props:{
+    addTodo:Function
+  },
+
+4.在Header.vue中调用
+this.addTodo(todo)
+
+5.addT事件
+methods:{
+    addT(){
+      let {content} = this
+      if(content.trim()){
+        let id = Date.now()
+        let isOver = false
+        let todo = {
+          id,
+          isOver,
+          content
+        }
+
+        // 去调用App组件内部的增加数据的方法去添加,不能再这直接去操作别人的数据
+
+        this.addTodo(todo)
+      }else{
+        alert('请输入合法内容')
+      }
+      this.content = ''
+    }
+  }
+```
+### 3.Item.vue
+```
+6.在Item.vue中 
+  1.
+    <button class="btn btn-danger" style="display:none">删除</button>
+    删掉 style="display:none" ×
+
+  2.在css中
+    li button里的display: none; 删除 ×
+
+  3.在Item中 使用v-show实现删除按钮的显示与隐藏
+  <button class="btn btn-danger" v-show="isShow">删除</button>
+
+  4.isShow在Item中定义
+  data() {
+    return {
+      isShow:false
+    }
+  },
+
+ 5.对li添加移入移出事件
+  <li @mouseenter="isShow = true" @mouseleave="isShow = false">
+
+6.在Item中定义一个类
+myClass
+ <li @mouseenter="isShow = true" @mouseleave="isShow = false" :class="{myClass:isShow}">
+ 知道有哪些类 但是不知道生不生效 而生不生效是根据数据决定的 这个数据必须是个布尔值
+
+7.Item.vue
+点击checkbox 绑定一个事件 updateO
+
+8.App.vue
+修改数据的函数定义在App.vue中
+methods:{
+    updateO(){
+      // 改数据 交给App.vue去做
+      this.todos[index].isOver = !this.todos[index].isOver
+    }
+  }
+
+9.App.vue把updateOne函数传给Main.vue 
+<Main :todos="todos" :updateOne="updateOne"></Main>
+
+10.函数在Main.vue中接收updateOne函数
+  props:{
+    todos:Array,
+    updateOne:Function
+  }
+
+11.Main.vue把updateOne传给Item 同时把下标index也传过去 因为一会要用
+在Main.vue中 
+<Item v-for="(todo,index) in todos" :key="todo.id" :todo="todo" :updateOne="updateOne" :index="index"></Item>
+
+11.在Item.vue中接收
+props:{
+    todo:Object,
+    updateOne:Funtion,
+    index:Number
+  },
+
+  12.在Item.vue中调用updateO函数
+  methods:{
+    updateO(){
+      // 改数据 交给App.vue去做
+      this.updateOne(this.index)
+      
+    }
+  }
+
+  deleteO函数步骤同上
+
+```
+### Footer.vue
+```
+1.在App.vue中先把todos传给Footer
+<Footer :todos="todos"></Footer>
+
+2.在Footer.vue中接收todos
+props:{
+    todos:Array
+  },
+
+3.目标：根据todos计算出  已完成{{overNum}} / 全部{{allNum}}
+computed: {
+    overNum(){
+      return this.todos.filter(item => item.isOver).length
+
+      // return this.todos.filter(function(item){
+      //   return item.isOver
+      // }).length
+    },
+    allNum(){
+      return this.todos.length
+    }
+  }, 
+
 ```
 
 ```
+目标:item全选 footer就勾选 否则就不勾选 | item为0 footer不勾选
+1.footer.vue中 v-model="isCheckAll" 
+<input type="checkbox" v-model="isCheckAll" />
+          <!-- 
+            v-model 如果input当中是有value的,那么这个v-model收集/显示---影响的就是value的值 
+            对于文本输入框、密码输入框来说一定是有value的
+            对于单选输入框和多选输入框,如果没有写value，那么收集的是checked的值
+           -->
+
+2.计算
+isCheckAll:{
+      get(){
+        // 一开始打勾的状态是需要去计算的
+        return this.overNum === this.allNum && this.allNum > 0
+      },
+      set(){
+        // 点击了全选,相当于在修改打勾的状态,是需要去计算的
+        
+      }
+```
+
+
 
 # props的写法
 * 1.数组写法
@@ -947,3 +1233,163 @@ props:{
   }
 ```
 
+* 3.接收属性的写法
+```
+props:{
+  index:{
+			type:Number,
+			default:0
+		}
+}
+```
+
+# v-model
+```
+v-model 如果input当中是有value的,那么这个v-model收集/显示---影响的就是value的值 
+            对于文本输入框、密码输入框来说一定是有value的
+            对于单选输入框和多选输入框,如果没有写value，那么收集的是checked的值
+```
+
+* bug 管理平台 禅道
+* 墨刀
+
+## 面试必问 cookie和session
+```
+cookie存储的内容比较小  --- 用来做状态保持的,
+					是因为浏览器端发送请求服务器端不认识,需要用cookie和session做状态保持,能够让服务器端能够认识服务器端两个请求时同一个客户发的
+					服务器不认识两次发请求的是一个人,为了做到状态保持,出现了cookie
+					
+					cookie为了做到状态保持,带了一段文字到服务器,服务器接收到请求一看这两次的文字是一样的,那就是同一个人
+					状态保持就是看你是不是一个人
+					后来因为cookie安全性太不好了,人稍微一抓包就拿走了,而且把你的用户名密码看的清清楚楚,所以才出现了session
+
+					session是谁的解决手段:session是服务器的解决手段	,服务器一般会在一个数据库里边,或者说是在服务器的一个文件里边去存储一个sesssion_Key
+					当你第一次登录的时候,我们的服务端接收的请求会根据你的用户名和密码通过一个特殊的算法算出一个随机的字符串,而那个随机的字符串叫session_Key
+					然后给你返回响应的时候会把那个session_Key给你带回来给用户,而用户会把session_key放在cookie里边传回去,
+					这样就算抓包也只能拿到一个随机的字符串而拿不到用户名和密码
+					session只是做安全性的保障
+					但是session是依赖于cookie的
+```
+
+## 刷新还是原来的效果，不会回到初始的情况（数据存储分析）
+```
+				保存什么数据   todos
+				数据保存在哪   localStorage
+				什么时候保存   数据只要发生改变就该存储 ===== 》 深度监视
+				什么时候读取   初始化显示就该读取，放在data中
+
+
+
+				localStorage的简介（永久存储，关闭和刷新浏览器，数据不会丢失）
+				---为了客户端人员更好的存储数据,我们可以认为它是我们前端的一个小的数据库---存储数据
+				存储在浏览器端 在Application -localStorage和sessionStorage 存储数据的地方
+
+					localStorage是h5新增的一种本地存储数据方式，本质是一个对象
+					setItem(key,value)
+					getItem(key)  如果没有返回null
+					removeItem(key) 
+					clear()
+			
+				cookie存储的内容比较小  --- 用来做状态保持的,
+					是因为浏览器端发送请求服务器端不认识,需要用cookie和session做状态保持,能够让服务器端能够认识服务器端两个请求时同一个客户发的
+					服务器不认识两次发请求的是一个人,为了做到状态保持,出现了cookie
+					
+					cookie为了做到状态保持,带了一段文字到服务器,服务器接收到请求一看这两次的文字是一样的,那就是同一个人
+					状态保持就是看你是不是一个人
+					后来因为cookie安全性太不好了,人稍微一抓包就拿走了,而且把你的用户名密码看的清清楚楚,所以才出现了session
+
+					session是谁的解决手段:session是服务器的解决手段	,服务器一般会在一个数据库里边,或者说是在服务器的一个文件里边去存储一个sesssion_Key
+					当你第一次登录的时候,我们的服务端接收的请求会根据你的用户名和密码通过一个特殊的算法算出一个随机的字符串,而那个随机的字符串叫session_Key
+					然后给你返回响应的时候会把那个session_Key给你带回来给用户,而用户会把session_key放在cookie里边传回去,
+					这样就算抓包也只能拿到一个随机的字符串而拿不到用户名和密码
+					session只是做安全性的保障
+					但是session是依赖于cookie的
+          但是session是依赖于cookie的
+					cookie和session都是可以设置过期时间的,默认是7天
+
+```
+
+```
+[object Object]
+数组的toString方法
+函数的toString
+对象的toString
+localStorage存储数据的时候,会调用这个数据的toString方法(而且是递归调用)转化为字符串,然后进行存储
+最终localStorage里边存储的一定是个字符串
+```
+
+## 一般监视和深度监视
+```
+一般监视和深度监视
+				一般监视：
+					数组本身发生改变
+					数组内部元素整体改变
+				深度监视：
+					数组本身发生改变
+					数组内部元素整体改变
+					数组内部元素内部数据改变
+```
+
+* 一般监视
+```
+watch:{
+    // 现在监视的是todos数组,没有监视数组里的内容
+    // 一般监视:我们没办法取监视数组内部对象的数据,它是在监视数组本身的数据
+    todos(newVal,oldVal){ 
+      // 监视todos,只要todos发生改变就该存储到localStorage里边
+      localStorage.setItem('TODOS_KEY',JSON.stringify(newVal))
+      // JSON.stringify(newVal)转换成json字符串串,json字符串在前端对应的格式只有两种:对象的数组|对象
+    }
+  },
+```
+
+* 深度监视
+```
+深度监视数据，保存
+				数据需要变为json然后取存储，否则数据下次取到的就看不懂了内部会调用对象的toString，数据变了
+ watch:{
+    // 深度监视:监视数组内部所有的数据
+    todos:{
+      deep:true,//代表打开深度监视
+      handler(newVal,oldVal){
+        localStorage.setItem('TODOS_KEY',JSON.stringify(newVal))
+      }
+    }
+  },
+```
+* 数据从localStorage里边拿
+```
+ data() {
+    return {
+      // 数据要从localStorage里边拿
+      todos:JSON.parse(localStorage.getItem('TODOS_KEY')) || []  //用JSON.parse()转化为数据 如果拿到的是null就把它变成空数据
+    }
+  },
+```
+
+# 自定义事件和系统定义事件
+```
+自定义事件：自己定义的事件：事件类型（自己定义,无数个）和回调函数（自己定义自己触发,自己调）
+
+系统定义的事件：事件类型（固定几个）和回调函数（自己定义系统触发/浏览器调）
+```
+
+* 自定义事件
+```
+事件类型:  自己定义 无数个
+  
+回调函数: 自己定义 自己调用
+```
+* 系统定义事件
+```
+事件类型:  系统定义 固定几个
+      Mouse事件: onclick ondbclick onmousedown onmouseup onmouseout onmousemove onmouseover
+      Keyboard事件:onkeyup onkeydown 
+      Form事件:onblur onchange onfocus
+
+回调函数: 自己定义 浏览器/系统调用
+```
+
+# 原型链
+
+![](D:\a-尚硅谷-前端\01尚硅谷前端\视频\16-刘渊vue\1-vue基础\vue基础\vue-liuyuan-code\vueComponent\13、vm和组件对象的关系.png)
