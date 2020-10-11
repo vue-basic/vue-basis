@@ -4,7 +4,9 @@
       <!-- <Header :addTodo="addTodo" ref="header"></Header>  -->
       <!-- <Header  ref="header"></Header>  -->
       <Header @addTodo="addTodo" ref="header"></Header> 
-      <Main :todos="todos" :updateOne="updateOne" :deleteOne="deleteOne"></Main>
+      <!-- <Main :todos="todos" :updateOne="updateOne" :deleteOne="deleteOne"></Main> -->
+      <Main :todos="todos"  :deleteOne="deleteOne"></Main>
+
       <Footer :todos="todos"></Footer>
     </div>
   </div>
@@ -21,6 +23,13 @@ export default {
     Main,
     Footer, 
   },
+mounted() {
+  // 在A组件内部找到bus,因为bus是一个vm对象,所以它可以找到$on,$on是把事件绑定在谁身上
+  // 把事件绑定在bus身上 时间名:updateOne 回调函数updateOne
+  // 回调函数留在了A组件中
+  this.$bus.$on('updateOne',this.updateOne)
+},
+
   // 1.自定义事件的第一种写法
 // mounted() {
 //   // 当你的页面一旦挂载ok,那我就获取这个组件对象,怎么获取?ref

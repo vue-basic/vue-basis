@@ -1,6 +1,8 @@
 <template>
   <ul class="todo-main">
-    <Item v-for="(todo,index) in todos" :key="todo.id" :todo="todo" :updateOne="updateOne" :index="index" :deleteOne="deleteOne"></Item>
+    <!-- <Item v-for="(todo,index) in todos" :key="todo.id" :todo="todo" :updateOne="updateOne" :index="index" :deleteOne="deleteOne"></Item> -->
+      <Item v-for="(todo,index) in todos" :key="todo.id" :todo="todo"  :index="index" :deleteOne="deleteOne"></Item>
+
   </ul>
 </template>
 
@@ -13,7 +15,7 @@ export default {
   },
   props:{
     todos:Array,
-    updateOne:Function,
+    // updateOne:Function,
     deleteOne:Function
   }
 };

@@ -14,7 +14,7 @@ export default {
   name:'Item',
   props:{
     todo:Object,
-    updateOne:Function,
+    // updateOne:Function,
     index:Number,
     deleteOne:Function
   },
@@ -27,7 +27,8 @@ export default {
     // 点击复选框更新单个的完成状态 调用App组件的方法更新单个状态
     updateO(){
       // 改数据 交给App.vue去做
-      this.updateOne(this.index)
+      // this.updateOne(this.index)
+      this.$bus.$emit('updateOne',this.index)
       
     },
     // 点击删除按钮，调用App组件的方法去删除单个todo
