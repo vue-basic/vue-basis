@@ -917,6 +917,67 @@ PubSub.publishSync('MY TOPIC', 'hello world!');
 
 
 
+
+### 5.插槽slot
+* 1.默认插槽
+```
+slot 如果没有起名字,称作默认插槽,它会把父组件中你写的东西,在slot中都来一份
+<slot>
+  <!-- 占位置,这里面的内容以及这里面的结构不确定,得由父组件给我传 -->
+</slot>
+
+一般我们在用的时候,默认插槽只有一个
+```
+* 2.命名插槽/具名插槽
+```
+子：
+<slot name="btn">
+
+</slot>
+
+父：
+<template slot="btn">
+        <h2>我爱你</h2>
+</template>
+```
+* 3.作用域插槽  子----》父
+```
+数据在子组件中,结构由父组件决定
+结构是父组件决定的 数据是子组件中的 但是展示的结构是由外部的父组件决定的
+
+ 什么时候用作用域插槽？
+ 当碰到数据是在子组件当中展示的,而结构是由父组件决定的,此时必然使用作用域插槽
+```
+* 父
+```
+<Child2 :todos="todos">
+      <!-- 决定子组件内部的结构，比如假设isOver为true,那么内容需要包含在span当中并且内容前面带√ -->
+      <!-- slot-scope会把子组件传递过来的数据，放在一个对象当中作为属性 -->
+      <!-- 什么时候用作用域插槽： 当碰到数据是在子组件当中展示的，而结构是由父组件决定的，此时必然使用作用域插槽 -->
+      <template slot-scope="scopePerps">
+        <span v-if="scopePerps.todo.isOver">
+          √
+        </span>
+        {{scopePerps.todo.content}}
+      </template>
+</Child2>
+```
+* 子
+```
+<ul>
+            <li v-for="(todo,index) in todos" :key="todo.id" >
+                <slot :todo="todo" >
+                    <!--  
+                        可以通过作用域插槽,把当前的数据传到父中,和属性传值一样
+                        :todo="todo" 是作用域插槽的一部分,会传递给父组件当中某个固定的区域
+                        数据在子组件当中,结构由父组件决定
+                     -->
+                     {{todo.content}}
+                </slot>
+            </li>
+ </ul>
+```
+
 ### 2.增加评论的功能 Add.vue
 * 最终要点击提交按钮 添加事件 @click="addC"
 
@@ -1493,3 +1554,107 @@ watch:{
 
 ![](D:\a-尚硅谷-前端\01尚硅谷前端\视频\16-刘渊vue\1-vue基础\vue基础\vue-liuyuan-code\vueComponent\13、vm和组件对象的关系.png)
 
+### axios总结
+*  axios基本使用
+* 函数用法以及对象用法
+
+```
+ /**
+             * axios中一共有三种参数
+             * 1.params参数
+             * 是和路径放在一块的,是路径中的一部分,而且params参数只能放在路径中
+             * 2.query参数
+             * 可以写在路径当中  以?开头 key=value
+             * 也可以写在配置对象params写
+             * params:{
+             *   // params参数对应的是我们所说的query参数,url查询参数 ?key=value
+             *   username='zhaoliying'
+             *   },
+             * 会自动的把username='zhaoliying' 拼在url后边,以?隔开
+             * 如果url写了query参数,params就不需要写了,两个地方写一次就好
+             * 3.请求体参数  POST 提交参数  
+             * data:{
+             *    // data参数对应的是请求体参数
+             * }
+             * 提交
+             * POST GET(带query参数比较丰富) PUSH
+             * DELETE(id)
+             * 
+             * axios返回的是一个Promise对象
+             * 
+             * async await 可以用同步代码实现异步操作
+             * 只是简化代码 
+             * asyns函数返回的一定是一个Promise
+             */
+```
+
+```
+/*
+            async函数返回值一定是Promise
+            返回的promise成功还是失败看这个函数的返回值
+
+            没有return 返回undefinedh
+
+            返回值分两种情况:返回值返回的是promise,要么就是一个数据,要么就是throw一个ERROR
+            如果返回的是一个promise,那么这个async函数返回的promise成功还是失败就看这个promise的状态
+            如果是一个ERROR,那么就是失败的
+            其余都是成功的
+            undefined 成功
+        */
+```
+* 函数用法
+```
+<body>
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.19.2/axios.js"></script>
+    <script>
+        // axios基本使用
+        // 函数用法以及对象用法
+        
+        
+
+        async function sendAjax(){
+            try {
+                const result = await axios({
+            url:'https://api.github.com/search/repositories',
+            //  /8也是一个参数,真正的params参数
+            
+            method:'GET',
+            params:{
+                // params参数对应的是我们所说的query参数,url查询参数 ?key=value
+                // username='zhaoliying'
+                q:'v',
+                sort:'stars'
+            },
+            // data:{
+            //     // data参数对应的是请求体参数
+            // }
+            })
+            console.log(result.data)
+            } catch (error) {
+                console.log(error.message)
+            }
+        }
+            
+        // }).then(response=>{
+        //     console.log(response.data)
+        // }).catch(error=>{
+        //     console.log(error.message)
+        // })
+        // }
+        sendAjax()
+
+        /*
+            async函数返回值一定是Promise
+            返回的promise成功还是失败看这个函数的返回值
+
+            没有return 返回undefinedh
+
+            返回值分两种情况:返回值返回的是promise,要么就是一个数据,要么就是throw一个ERROR
+            如果返回的是一个promise,那么这个async函数返回的promise成功还是失败就看这个promise的状态
+            如果是一个ERROR,那么就是失败的
+            其余都是成功的
+            undefined 成功
+        */
+    </script>
+</body>
+```
