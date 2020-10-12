@@ -1658,3 +1658,262 @@ watch:{
     </script>
 </body>
 ```
+
+# users_pages
+## 静态页面
+* Header.vue
+* Main.vue
+
+## 动态展示
+* Main.vue
+```
+ <div>
+      <h2 v-if="isFirst">欢迎光临,请输入关键字进行搜索</h2>
+      <h2 v-else-if="isLoading">正在搜索,请稍后</h2>
+      <h2 v-else-if="errMsg">请求出错:{{errMsg}}</h2>
+    <div v-else class="row" >
+      <div class="card">
+        <a href="https://github.com/reactjs" target="_blank">
+          <img
+            src="https://avatars.githubusercontent.com/u/6412038?v=3"
+            style="width: 100px"
+          />
+        </a>
+        <p class="card-text">reactjs</p>
+      </div>
+    </div>
+  </div>
+
+数据
+ data() {
+      return {
+          isFirst:true,
+          isLoading:false,
+          errMsg:'',
+          users:[]
+      }
+  },
+```
+
+```
+Ajax请求在哪发？
+在Header中发,回来的数据也在Header中
+数据要传给Main,通信太频繁
+
+在Main里边发请求,拿回来数据在Main里边,在Main中改自己的数据
+```
+```
+  methods:{
+    searchAjax(q){
+      //在发送ajax请求之前，让页面显示正在请求中
+      this.isFirst = false
+      this.isLoading = true
+      //就可以根据searchName去发送ajax请求
+      axios({
+        url:'https://api.github.com/search/users',
+        method:'get',
+        params:{
+          q
+        }
+      }).then(response => {
+        let userList = response.data.items.map(item => {
+          return {
+            userName:item.login,
+            userUrl:item.url,
+            userImg:item.avatar_url
+          }
+        })
+        this.users = userList
+        this.isLoading = false  //请求成功拿到数据，显示用户信息
+
+      }).catch(error => {
+        this.errMsg = error.message
+        this.isLoading = false //请求失败拿到错误信息，显示错误信息
+      })
+    }
+  }
+};
+```
+
+* Header.vue
+```
+1.
+<input type="text" placeholder="enter the name you search" v-model="searchName"/>
+v-model="searchName" 收集数据
+
+2.
+ data() {
+      return {
+          searchName:'',
+      }
+  },
+
+3.
+<button @click="search">Search</button>
+点击search 触发search回调
+
+
+5.Header和Main为兄弟组件 ---- 全局事件总线
+new Vue({
+  <!-- 配置总线 -->
+  beforeCreate() {
+    Vue.prototype.$bus = this
+  },
+  el:'#root',
+  render: h => h(App)
+})
+
+6.在你想要拿数据的地方绑定事件
+Main想要拿到数据
+在Mounted里边绑定事件
+mounted() {
+      this.$bus.$on('searchAjax',this.searchAjax)
+  },
+
+7.在你想要发送数据的地方触发事件
+Header中发送数据
+methods:{
+      search(){
+        //   当你一旦点击search，把关键字传给Main，让它在Main中发请求
+        // 本来我们可以在这发送请求获取数据,但是在这获取到数据是都要通信操作给Main去存储
+        // 因为我们的数据设计在Main当中
+        // 所以我们在这可以把输入的关键字搜索名字 传递给Main组件,然后在Main组件党章去发请求
+        // 这样的话，Main组件拿到数据后不用通信直接修改存储
+
+        this.$bus.$emit('searchAjax',this.searchName) //触发事件,并把数据传过去
+      }
+  }
+```
+
+## async 和 await
+* sync 同步
+* async 异步
+
+## 跨域
+```
+1.什么是跨域?
+跨域是存在于 【浏览器】上的同源验证策略
+同源验证策略:你发送请求的目标和你自己的站位置一样还是不一样
+只要不一样就是跨域
+
+  1.跨域只存在于浏览器
+  2.不在浏览器发请求是不会存在跨域问题的
+  3.http请求分为两大类:普通http请求(一般不会出现跨域的)和Ajax请求(跨域是出现在ajax请求)
+          
+2.在什么地方会跨域
+  浏览器会跨域 服务器不会
+
+3.什么条件会跨域
+  同源(协议 ip 端口一致) 不跨域
+  不同源跨域(三个中间有一个不一样就跨域)
+  http://localhost:8080/   -----> github 必然跨域 尤其是ajax请求
+
+4.解决跨域
+  前端可以解决(jsonp和配置代理)、后端也可以解决(比较容易) 
+  一般后端解决比前端容易
+
+解决跨域
+1.jsonp
+2.cors
+2.代理服务器
+```
+
+# 配置代理服务器
+```
+1.github 上搜索 express 最上边那个
+
+const express = require('express')
+const app = express()
+
+app.get('/', function (req, res) {
+  res.send('Hello World')
+})
+
+app.listen(3000)
+
+2.安装
+npm install express -S
+```
+
+```
+9000 devServer 前端 浏览器       4000 后端
+在9000端口 给  4000端口 发请求必然跨域 
+站在9000端口 给 4000端口 发请求必然跨域
+
+proxy代理 
+不直接给4000端口发请求
+而是给 webpack devServer 发请求
+好处:浏览器和webpack devServer目前的端口是一样的 都是9000
+浏览器跑在 webpack devServer身上,而且 webpack devServer身上有一个proxy模块
+可以把服务请求发给 webpack devServer内部的proxy
+proxy一看浏览器想跨域,proxy会把这个请求转发出去
+任何的请求发出去都要经过看门狗(proxy),如果需要跨域就给你转发,如果不需要跨域直接访问它
+
+
+```
+* 配置代理服务器解决跨域
+```
+1.本身我们现在浏览器就跑在开发服务器 webpack-dev-server
+  而这个服务器带了一个魔窟啊哎,这个模块可以支持我们使用代理
+
+2.原理:在浏览器发请求的适合,把这个请求发给服务器上的这个代理模块(proxy)
+  再由这个代理模块转发给我们真正的服务器
+  这样的话,我们原来由浏览器直接发送请求到服务器就转化为服务器到服务器之间的请求
+
+3.你要让代理转发,那么就得告诉代理你的这个请求需要转发
+  配置以固定什么开头的路径需要代理转发,代理看到这个路径是以它开头就会帮你转发
+
+4.代理转发的时候会把路径交给真正的请求服务器,作为请求路径,需要把固定的开头去除
+
+5.changeOrigin:true,  //支持跨域,如果协议/主机也不相同,必须加上
+  proxy: {
+            "/api": {
+              //  /api  发的请求带/api代表要跨域,否则不要跨域
+                target: "http://localhost:4000", //告诉代理如果碰到了/api开头的路径把请求转发到target
+                <!-- 
+                    localhost:9000/api/users/info 我们请求的路径
+                    经过代理
+                    localhost:4000/api/users/info 代理转发的初始路径
+                    pathRewrite
+                    localhost:4000/users/info
+                 -->
+                pathRewrite: {"^/api" : ""},//代理会把身份标识的东西去掉,替换成空串
+                changeOrigin:true  // 协议 IP 端口任何改变都会解决
+	    }
+	}		
+
+前端运行在9000 运行在开发服务器webpack-dev-server 
+如果从9000直接发 9000 ---> 4000 肯定跨域  
+现在让9000 ---> 9000 自己给自己要数据   相当于给webpack-dev-server这个服务器要数据
+而webpack-dev-server服务器里边有一个配置模块,相当于一个看门狗,这个模块你配置了,这个看门狗就会帮你看门
+这个看门狗如果不配置它是不会给你看门的,这个看门狗就是proxy代理
+你只要配置了proxy代理,今后你发的所有请求都会经过这个看门狗,帮你过滤出一些东西
+代理(看门狗)给了你一个身份并标识,只要你的路径中是以/api开头的,就让看门狗拿出来单独转发,如果你的路径不是以/api开头的,这个看门狗相当于啥也不知道,啥都不干
+而代理是在webpack-dev-server 服务器上的,而不是在浏览器上的
+而浏览器9000直接给4000端口发请求就转化为服务器9000给4000端口发请求,服务器之间不存在跨域问题,跨域只存在浏览器上
+所以服务器给它发请求是不会存在跨域的,那么数据就会先给服务器,服务器再转发给浏览器
+代理服务器上的数据为什么浏览器可以拿?
+浏览器本身就跑在9000端口
+因为他俩都是9000端口,没有跨域
+
+
+
+
+ 
+```
+```
+/**
+ * 什么是路由?
+ * 路由最终是key和value的映射关系
+ * 是路径和一个东西的映射关系
+ * 
+ * 后端路由
+ * 一个路径对应一个函数
+ * 
+ * 前端路由
+ * 一个路径对应一个组件
+ * 
+ */
+
+//  启动服务  node 文件名
+```
