@@ -7,7 +7,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   // 入口
-  entry: './src/main.js',
+  entry: ["@babel/polyfill",'./src/main.js'],
   // 出口
   output: {
     path: path.resolve(__dirname, 'dist'),

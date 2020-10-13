@@ -1917,3 +1917,109 @@ proxy一看浏览器想跨域,proxy会把这个请求转发出去
 
 //  启动服务  node 文件名
 ```
+* @babel/polyfill 解决Async await
+
+# Vuex  官网---印记中文
+```
+负责管理数据
+集中统一管理数据
+对于数据的增删改查一系列操作从Vue.js中脱离出来
+
+核心概念(5个):
+  State
+  Getter
+  Mutation
+  Action
+  Module
+```
+
+* 1.安装vuex
+```
+npm install vuex --save
+```
+* vuex--->store.js
+```
+import Vue from 'vue'
+import Vuex from 'vuex'
+Vue.use(Vuex)  //安装插件 --- 声明使用插件 安装给Vue了
+```
+
+```
+export default new Vuex.Store({
+  state:{
+
+  },
+  mutations:{
+
+  },
+  actions:{
+
+  },
+  getters:{
+
+  }
+})
+```
+
+```
+const state = {
+  //是专门用来存数据(状态)的地方,它是一个对象  ---仓库---管数据
+  //是一个包含多个属性和属性值的对象
+}
+
+const mutations = {
+  //专门用来更新数据的各种方法组成的对象
+  //这些个方法必须是直接修改数据的方法,不能在这些方法内部存在 判断 循环 异步  ---改数据
+  //一系列直接修改数据的方法
+}
+
+const actions = {
+  //难点
+  //专门用来和组件行为(用户行为)进行对接的各种方法组成的对象
+  //还有一个作用,用来对接成功后 告知相应的mutations中的对应方法去修改数据---调函数 一定有队列
+  //能在这些方法内部存在 判断 循环 异步  
+
+  //1.包含一系列和用户对接的方法
+  //2.通知mutations中的对应的方法进行数据更改
+
+  1.对接用户行为
+  2.对接mutations
+}
+
+const getters = {
+  //如果用户想要获取根据state中的数据计算出来的数据就可以写在这里
+  //计算属性
+
+  //一系列的方法---计算属性(get方法) 根据state中的数据计算出来用户要使用的数据
+
+}
+
+<!-- 最终向外暴露了一个对象 -->
+export default new Vuex.Store({  
+  state,//f
+  mutations,
+  getters,
+  actions
+})
+```
+
+```
+Vuex是Vue的状态管理
+什么是状态?状态可以理解为数据
+用Vuex管理数据
+
+store.js  状态管理---管理数据的
+
+```
+
+```
+1.在main.js中引入store
+import store from '@/vuex/store'
+
+2.把store在Vue的配置对象当中配置
+const vm = new Vue({
+  el:'#root',
+  render: h => h(App),
+  store   //如果我们声明使用（注册）store(vuex)，那么每个组件对象都可以通过this.$store拿到我们的store对象
+})
+```
